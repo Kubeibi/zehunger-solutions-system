@@ -1,0 +1,190 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form elements
+    const forms = {
+        batchInfo: document.getElementById('batchInfoForm'),
+        feedingRecords: document.getElementById('feedingRecordsForm'),
+        environmentalMonitoring: document.getElementById('monitoringForm'),
+        cleaningSanitation: document.getElementById('cleaningForm'),
+        problemsSolutions: document.getElementById('problemsForm')
+    };
+
+    // API endpoint mapping
+    const apiEndpoints = {
+        'batchInfo': 'hatchery/batch',
+        'feedingRecords': 'hatchery/feeding',
+        'environmentalMonitoring': 'hatchery/monitoring',
+        'cleaningSanitation': 'hatchery/cleaning',
+        'problemsSolutions': 'hatchery/problems'
+    };
+
+    // Show alert with message
+    function showAlert(type, message) {
+        const alertId = type === 'success' ? 'successAlert' : 'errorAlert';
+        const alertElement = document.getElementById(alertId);
+        
+        if (!alertElement) {
+            console.error(`Alert element with id ${alertId} not found`);
+            return;
+        }
+
+        // Find or create the message span
+        let messageSpan = alertElement.querySelector('span');
+        if (!messageSpan) {
+            messageSpan = document.createElement('span');
+            alertElement.appendChild(messageSpan);
+        }
+
+        // Set the message
+        messageSpan.textContent = message;
+        
+        // Show the alert
+        alertElement.style.display = 'block';
+        
+        // Hide after 5 seconds
+        setTimeout(() => {
+            alertElement.style.display = 'none';
+        }, 5000);
+    }
+
+    // Form validation
+    function validateForm(form, formType) {
+        const errors = {};
+        const formData = new FormData(form);
+        
+        // Common validation for all forms
+        form.querySelectorAll('[required]').forEach(field => {
+            if (!field.value.trim()) {
+                errors[field.name] = `${field.name.replace(/([A-Z])/g, ' $1').trim()} is required`;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        // Form-specific validation
+        switch(formType) {
+            case 'batchInfo':
+                const totalEggsGrams = parseFloat(formData.get('total_eggs_grams'));
+                if (totalEggsGrams <= 0) {
+                    errors.total_eggs_grams = 'Total eggs must be greater than 0';
+                }
+                break;
+            case 'feedingRecords':
+                const feedPer5gEggs = parseFloat(formData.get('feed_per_5g_eggs_grams'));
+                const totalFeedUsed = parseFloat(formData.get('total_feed_used_grams'));
+                if (feedPer5gEggs <= 0) {
+                    errors.feed_per_5g_eggs_grams = 'Feed per 5g eggs must be greater than 0';
+                }
+                if (totalFeedUsed <= 0) {
+                    errors.total_feed_used_grams = 'Total feed used must be greater than 0';
+                }
+                break;
+            case 'environmentalMonitoring':
+                const temperature = parseFloat(formData.get('temperature_c'));
+                const humidity = parseFloat(formData.get('humidity_percent'));
+                if (temperature < -50 || temperature > 100) {
+                    errors.temperature_c = 'Temperature must be between -50 and 100';
+                }
+                if (humidity < 0 || humidity > 100) {
+                    errors.humidity_percent = 'Humidity must be between 0 and 100';
+                }
+                break;
+        }
+
+        return Object.keys(errors).length === 0 ? null : errors;
+    }
+
+    // Handle form submission
+    async function handleSubmit(form, formType) {
+        try {
+            // Validate form
+            const errors = validateForm(form, formType);
+            if (errors) {
+                Object.entries(errors).forEach(([field, message]) => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input) {
+                        input.classList.add('is-invalid');
+                        const feedback = input.nextElementSibling;
+                        if (feedback && feedback.classList.contains('invalid-feedback')) {
+                            feedback.textContent = message;
+                        }
+                    }
+                });
+                showAlert('error', 'Please fix the errors in the form');
+                return;
+            }
+
+            // Collect form data
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                // Convert numeric fields
+                if (['total_eggs_grams', 'feed_per_5g_eggs_grams', 'total_feed_used_grams', 
+                     'days_to_utilize', 'temperature_c', 'humidity_percent', 'days_to_implement'].includes(key)) {
+                    data[key] = value ? parseFloat(value) : null;
+                } else {
+                    data[key] = value;
+                }
+            });
+
+            // Get the correct API endpoint
+            const endpoint = apiEndpoints[formType];
+            if (!endpoint) {
+                throw new Error(`No API endpoint defined for form type: ${formType}`);
+            }
+
+            console.log('Sending data to:', `http://localhost:5000/api/${endpoint}`);
+            console.log('Data:', data);
+
+            // Send data to backend
+            const response = await fetch(`http://localhost:5000/api/${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                mode: 'cors',
+                credentials: 'same-origin',
+                body: JSON.stringify(data)
+            });
+
+            console.log('Response status:', response.status);
+            const result = await response.json();
+            console.log('Response data:', result);
+
+            if (response.ok) {
+                showAlert('success', result.message || 'Data submitted successfully!');
+                form.reset();
+            } else {
+                throw new Error(result.error || 'Failed to submit data');
+            }
+        } catch (error) {
+            console.error('Error details:', error);
+            if (error.message.includes('Failed to fetch')) {
+                showAlert('error', 'Unable to connect to the server. Please ensure the server is running at http://localhost:5000');
+            } else {
+                showAlert('error', `Error: ${error.message}`);
+            }
+        }
+    }
+
+    // Add event listeners to forms
+    Object.entries(forms).forEach(([formType, form]) => {
+        if (form) {
+            // Remove invalid state on input
+            form.querySelectorAll('input, select, textarea').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('is-invalid');
+                });
+            });
+
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleSubmit(this, formType);
+            });
+        }
+    });
+});
+</script> 

@@ -1,0 +1,15 @@
+[Unit]
+Description=BSF Farm Flask app via Gunicorn
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/bsf-farm/backend
+Environment="PATH=/opt/bsf-farm/backend/venv/bin"
+EnvironmentFile=/opt/bsf-farm/backend/.env
+ExecStart=/opt/bsf-farm/backend/venv/bin/gunicorn -w 3 -b 127.0.0.1:8000 app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

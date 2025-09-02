@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve BSF Farm Manager
+After=network.target
+
+[Service]
+User=your_user
+Group=www-data
+WorkingDirectory=/home/your_user/your_project_directory/backend
+Environment="PATH=/home/your_user/your_project_directory/backend/venv/bin"
+ExecStart=/home/your_user/your_project_directory/backend/venv/bin/gunicorn --workers 3 --bind unix:/run/bsf-farm.sock -m 007 app:app
+
+[Install]
+WantedBy=multi-user.target 

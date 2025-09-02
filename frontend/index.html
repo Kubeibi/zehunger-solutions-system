@@ -1,0 +1,3106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>eFarm Zehunger - Smart BSF Farm Management</title>
+  <meta name="description" content="eFarm Zehunger is a smart Black Soldier Fly farm management platform for efficient, sustainable farming.">
+  <meta name="keywords" content="BSF, Black Soldier Fly, farm management, sustainable farming, eFarm Zehunger">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="eFarm Zehunger - Smart BSF Farm Management">
+  <meta property="og:description" content="eFarm Zehunger is a smart Black Soldier Fly farm management platform for efficient, sustainable farming.">
+  <meta property="og:url" content="https://efarmzehunger.com/">
+  <meta property="og:type" content="website">
+  <!-- <meta property="og:image" content="https://efarmzehunger.com/static/your-image.jpg"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <a href="login.html">
+        <img src="logo.png" alt="Zehunger Solutions Logo" style="width:64px;height:64px;">
+      </a>
+      <span>BSF FARM</span>
+    </div>
+    <div class="sidebar-section-header clickable" onclick="toggleSidebarSection('production-links')">Production</div>
+    <div id="production-links" class="sidebar-links-group">
+      <div class="nav-link active" onclick="showSection('waste', this)">
+        <i class="fas fa-recycle"></i><span>Waste Management</span>
+      </div>
+      <div class="nav-link" onclick="showSection('hatchery', this)">
+        <i class="fas fa-egg"></i><span>Hatchery</span>
+      </div>
+      <div class="nav-link" onclick="showSection('feeding', this)">
+        <i class="fas fa-utensils"></i><span>Larval Feeding</span>
+      </div>
+      <div class="nav-link" onclick="showSection('drying', this)">
+        <i class="fas fa-wind"></i><span>Drying Process</span>
+      </div>
+      <div class="nav-link" onclick="showSection('facility', this)">
+        <i class="fas fa-warehouse"></i><span>Fly Facility</span>
+      </div>
+      <div class="nav-link" onclick="showSection('records', this)">
+        <i class="fas fa-archive"></i><span>Records</span>
+      </div>
+      <div class="nav-link" onclick="showSection('report', this)">
+        <i class="fas fa-chart-pie"></i><span>Reports</span>
+      </div>
+    </div>
+    <div class="sidebar-section-header clickable" onclick="toggleSidebarSection('sales-links')">Sales</div>
+    <div id="sales-links" class="sidebar-links-group" style="display:none;">
+      <div class="nav-link" onclick="showSection('customers', this)">
+        <i class="fas fa-users"></i><span>Customers</span>
+      </div>
+      <div class="nav-link" onclick="showSection('sales', this)">
+        <i class="fas fa-cash-register"></i><span>Sales</span>
+      </div>
+      <div class="nav-link" onclick="showSection('deliveries', this)">
+        <i class="fas fa-truck"></i><span>Deliveries</span>
+      </div>
+      <div class="nav-link" onclick="showSection('feedback', this)">
+        <i class="fas fa-comment-dots"></i><span>Customer Feedback</span>
+      </div>
+    </div>
+    <div class="nav-link logout-link" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+    </div>
+  </div>
+
+  <!-- Notification Area -->
+  <div id="notification" class="alert" style="display:none;"></div>
+
+  <!-- Main Content Wrapper -->
+  <div class="content-wrapper">
+    <div class="main-content">
+      <div id="waste" class="section active">
+        <h1><i class="fas fa-recycle"></i> Waste Management</h1>
+        
+        <div class="alert alert-success hidden" id="successAlert">
+          <i class="fas fa-check-circle"></i> <span>Data submitted successfully!</span>
+        </div>
+        
+        <div class="alert alert-danger hidden" id="errorAlert">
+          <i class="fas fa-exclamation-circle"></i> <span>Please fix the errors in the form.</span>
+        </div>
+        
+        <!-- SOP Guidelines -->
+        <div class="guidelines-panel">
+          <h3><i class="fas fa-info-circle"></i> Waste Management Guidelines</h3>
+          <ul>
+            <li><strong>Suitable Waste:</strong> Fruits, vegetables, market waste (edible parts), brewer's grain, potato waste</li>
+            <li><strong>Avoid:</strong> Fibrous materials, hard seeds, sand contamination</li>
+            <li><strong>Storage:</strong> Covered containers, avoid ground contact, manage moisture</li>
+            <li><strong>Watch for:</strong> White mites indicate poor waste quality/excess moisture</li>
+          </ul>
+        </div>
+        
+        <!-- Waste Sourcing Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-truck"></i> Waste Sourcing</h2>
+          <form id="wasteSourcingForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="collectionDate" class="required">Collection Date</label>
+                <input type="date" id="collectionDate" name="collectionDate" class="form-control" required>
+                <div class="invalid-feedback">Please select a collection date</div>
+              </div>
+              <div class="form-group">
+                <label for="collectionTime" class="required">Collection Time</label>
+                <input type="time" id="collectionTime" name="collectionTime" class="form-control" required>
+                <div class="invalid-feedback">Please select a collection time</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sourceType" class="required">Source Type</label>
+                <select id="sourceType" name="sourceType" class="form-control" required>
+                  <option value="">Select source</option>
+                  <option value="restaurant">Restaurant</option>
+                  <option value="market">Market</option>
+                  <option value="brewery">Brewery</option>
+                  <option value="food_industry">Food Industry</option>
+                  <option value="household">Household</option>
+                  <option value="farm">Farm</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="invalid-feedback">Please select a source type</div>
+              </div>
+              <div class="form-group">
+                <label for="sourceName" class="required">Source Name/ID</label>
+                <input type="text" id="sourceName" name="sourceName" class="form-control" required>
+                <div class="invalid-feedback">Please enter source name/ID</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="wasteType" class="required">Waste Type</label>
+                <select id="wasteType" name="wasteType" class="form-control" required>
+                  <option value="">Select type</option>
+                  <option value="fruit">Fruit waste</option>
+                  <option value="vegetable">Vegetable scraps</option>
+                  <option value="brewers_grain">Brewer's grain</option>
+                  <option value="potato">Potato waste</option>
+                  <option value="food_leftovers">Food leftovers</option>
+                  <option value="mixed_organic">Mixed organic</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="invalid-feedback">Please select waste type</div>
+              </div>
+              <div class="form-group">
+                <label for="wasteWeight" class="required">Weight (kg)</label>
+                <input type="number" id="wasteWeight" name="wasteWeight" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter a valid weight</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="segregationStatus" class="required">Segregation Status</label>
+                <select id="segregationStatus" name="segregationStatus" class="form-control" required>
+                  <option value="">Select status</option>
+                  <option value="organic">Organic</option>
+                  <option value="inorganic">Inorganic</option>
+                  <option value="mixed">Mixed</option>
+                </select>
+                <div class="invalid-feedback">Please select segregation status</div>
+              </div>
+              <div class="form-group">
+                <label for="collectionPersonnel" class="required">Collection Personnel</label>
+                <input type="text" id="collectionPersonnel" name="collectionPersonnel" class="form-control" required>
+                <div class="invalid-feedback">Please enter personnel name</div>
+              </div>
+              <div class="form-group">
+                <label for="recordedBy" class="required">Recorded By</label>
+                <input type="text" id="recordedBy" name="recordedBy" class="form-control" required>
+                <div class="invalid-feedback">Please enter recorder name</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="contaminantsFound">Contaminants Found</label>
+              <select id="contaminantsFound" name="contaminantsFound" class="form-control" multiple>
+                <option value="plastic">Plastic</option>
+                <option value="metal">Metal</option>
+                <option value="glass">Glass</option>
+                <option value="sand">Sand</option>
+                <option value="mites">White mites</option>
+                <option value="other">Other</option>
+              </select>
+              <div class="help-text">Hold Ctrl/Cmd to select multiple items</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="collectionNotes">Notes</label>
+              <textarea id="collectionNotes" name="collectionNotes" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Record Waste Source</button>
+          </form>
+        </div>
+        
+        <!-- Storage Records Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-box"></i> Storage Records</h2>
+          <form id="storageRecordsForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="storageDate" class="required">Storage Date</label>
+                <input type="date" id="storageDate" name="storageDate" class="form-control" required>
+                <div class="invalid-feedback">Please select a storage date</div>
+              </div>
+              <div class="form-group">
+                <label for="storageMethod" class="required">Storage Method</label>
+                <select id="storageMethod" name="storageMethod" class="form-control" required>
+                  <option value="">Select method</option>
+                  <option value="plastic_bin">Plastic Bin</option>
+                  <option value="metal_bin">Metal Bin</option>
+                  <option value="compost_pit">Compost Pit</option>
+                  <option value="tank">Tank</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="invalid-feedback">Please select storage method</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="storageConditions" class="required">Storage Conditions</label>
+                <select id="storageConditions" name="storageConditions" class="form-control" required>
+                  <option value="">Select condition</option>
+                  <option value="good">Good</option>
+                  <option value="fair">Fair</option>
+                  <option value="poor">Poor</option>
+                  <option value="contaminated">Contaminated</option>
+                </select>
+                <div class="invalid-feedback">Please select storage conditions</div>
+              </div>
+              <div class="form-group">
+                <label for="storageDuration" class="required">Duration (days)</label>
+                <input type="number" id="storageDuration" name="storageDuration" class="form-control" min="1" required>
+                <div class="invalid-feedback">Please enter storage duration</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="plannedUtilization" class="required">Planned Utilization</label>
+              <select id="plannedUtilization" name="plannedUtilization" class="form-control" required>
+                <option value="">Select utilization</option>
+                <option value="feed">Feed</option>
+                <option value="fertilizer">Fertilizer</option>
+                <option value="energy">Energy</option>
+                <option value="other">Other</option>
+              </select>
+              <div class="invalid-feedback">Please select planned utilization</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="storageObservations">Observations</label>
+              <textarea id="storageObservations" name="storageObservations" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Record Storage</button>
+          </form>
+        </div>
+        
+        <!-- Processing Records Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-cogs"></i> Processing Records</h2>
+          <form id="processingRecordsForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="processingDate" class="required">Processing Date</label>
+                <input type="date" id="processingDate" name="processingDate" class="form-control" required>
+                <div class="invalid-feedback">Please select a processing date</div>
+              </div>
+              <div class="form-group">
+                <label for="processingType" class="required">Processing Type</label>
+                <select id="processingType" name="processingType" class="form-control" required>
+                  <option value="">Select type</option>
+                  <option value="composting">Composting</option>
+                  <option value="drying">Drying</option>
+                  <option value="fermentation">Fermentation</option>
+                  <option value="grinding">Grinding</option>
+                  <option value="mixing">Mixing</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="invalid-feedback">Please select processing type</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="processingMethod" class="required">Processing Method</label>
+                <input type="text" id="processingMethod" name="processingMethod" class="form-control" required>
+                <div class="invalid-feedback">Please enter processing method</div>
+              </div>
+              <div class="form-group">
+                <label for="wasteProcessed" class="required">Waste Processed (kg)</label>
+                <input type="number" id="wasteProcessed" name="wasteProcessed" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="byProducts">By-products Generated</label>
+                <input type="text" id="byProducts" name="byProducts" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="wasteReduction">Waste Reduction (%)</label>
+                <input type="number" id="wasteReduction" name="wasteReduction" class="form-control" min="0" max="100" step="0.1">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="processingRemarks">Remarks</label>
+              <textarea id="processingRemarks" name="processingRemarks" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Record Processing</button>
+          </form>
+        </div>
+
+        <!-- Environmental Monitoring Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-temperature-low"></i> Environmental Monitoring</h2>
+          <form id="wasteEnvironmentalMonitoringForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="monitoring_date" class="required">Monitoring Date *</label>
+                <input type="date" id="monitoring_date" name="monitoring_date" class="form-control" required>
+                <div class="invalid-feedback">Please select a monitoring date</div>
+              </div>
+              <div class="form-group">
+                <label for="monitoring_time" class="required">Monitoring Time *</label>
+                <input type="time" id="monitoring_time" name="monitoring_time" class="form-control" required>
+                <div class="invalid-feedback">Please select monitoring time</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="temperature" class="required">Temperature (°C) *</label>
+                <input type="number" id="temperature" name="temperature" class="form-control" step="0.1" required>
+                <div class="invalid-feedback">Please enter a valid temperature (°C)</div>
+              </div>
+              <div class="form-group">
+                <label for="humidity" class="required">Humidity (%) *</label>
+                <input type="number" id="humidity" name="humidity" class="form-control" step="0.1" required>
+                <div class="invalid-feedback">Please enter a valid humidity (%)</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="odor_level" class="required">Odor Level *</label>
+                <select id="odor_level" name="odor_level" class="form-control" required>
+                  <option value="">Select odor level</option>
+                  <option value="none">None</option>
+                  <option value="slight">Slight</option>
+                  <option value="moderate">Moderate</option>
+                  <option value="strong">Strong</option>
+                  <option value="very_strong">Very Strong</option>
+                </select>
+                <div class="invalid-feedback">Please select an odor level</div>
+              </div>
+              <div class="form-group">
+                <label for="pest_presence" class="required">Pest Presence *</label>
+                <select id="pest_presence" name="pest_presence" class="form-control" required>
+                  <option value="">Select pest presence</option>
+                  <option value="none">None</option>
+                  <option value="slight">Slight</option>
+                  <option value="moderate">Moderate</option>
+                  <option value="severe">Severe</option>
+                </select>
+                <div class="invalid-feedback">Please select pest presence level</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="pest_details">Pest Details</label>
+              <textarea id="pest_details" name="pest_details" class="form-control" rows="2" placeholder="Describe any pests observed"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="mitigation_actions">Mitigation Actions</label>
+              <textarea id="mitigation_actions" name="mitigation_actions" class="form-control" rows="2" placeholder="Describe any actions taken to address issues"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="remarks">Additional Remarks</label>
+              <textarea id="remarks" name="remarks" class="form-control" rows="2" placeholder="Any additional observations or notes"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Environmental Monitoring Data</button>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Larval Feeding Section -->
+      <div id="feeding" class="section">
+        <h1><i class="fas fa-utensils"></i> Larval Feeding</h1>
+        
+        <!-- SOP Guidelines -->
+        <div class="guidelines-panel">
+          <h3><i class="fas fa-info-circle"></i> Larval Feeding Guidelines</h3>
+          <ul>
+            <li><strong>Feed Types:</strong> Use appropriate waste types based on larval age and development stage</li>
+            <li><strong>Quantity:</strong> Monitor feed consumption and adjust quantities accordingly</li>
+            <li><strong>Frequency:</strong> Regular feeding schedule based on larval age and development stage</li>
+            <li><strong>Quality:</strong> Ensure feed is properly prepared and free from contaminants</li>
+          </ul>
+        </div>
+        
+        <!-- Environmental Monitoring Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-temperature-high"></i> Environmental Monitoring</h2>
+          <form id="environmentalMonitoringForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="monitoringDate" class="required">Date</label>
+                <input type="date" id="monitoringDate" name="monitoring_date" class="form-control" required>
+                <div class="invalid-feedback">Please select a date</div>
+              </div>
+              <div class="form-group">
+                <label for="monitoringTime" class="required">Time</label>
+                <input type="time" id="monitoringTime" name="monitoring_time" class="form-control" required>
+                <div class="invalid-feedback">Please select time</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="trayFacilityId" class="required">Tray/Facility ID</label>
+                <input type="text" id="trayFacilityId" name="tray_facility_id" class="form-control" required>
+                <div class="invalid-feedback">Please enter tray/facility ID</div>
+              </div>
+              <div class="form-group">
+                <label for="temperature" class="required">Temperature (°C)</label>
+                <input type="number" id="temperature" name="temperature" class="form-control" step="0.01" min="-50" max="100" required>
+                <div class="invalid-feedback">Please enter valid temperature (-50 to 100°C)</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="humidity" class="required">Humidity (%)</label>
+                <input type="number" id="humidity" name="humidity" class="form-control" step="0.01" min="0" max="100" required>
+                <div class="invalid-feedback">Please enter valid humidity (0-100%)</div>
+              </div>
+              <div class="form-group">
+                <label for="ammoniaOdor" class="required">Ammonia Odor</label>
+                <select id="ammoniaOdor" name="ammonia_odor" class="form-control" required>
+                  <option value="">Select odor level</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                <div class="invalid-feedback">Please select ammonia odor status</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" class="form-control" rows="2" placeholder="Any additional observations or notes"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Environmental Monitoring Data</button>
+          </form>
+        </div>
+
+        <!-- Substrate Preparation Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-mortar-pestle"></i> Substrate Preparation</h2>
+          <form id="substratePreparationForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="batchNo" class="required">Batch Number</label>
+                <input type="text" id="batchNo" name="batchNo" class="form-control" required>
+                <div class="invalid-feedback">Please enter batch number</div>
+              </div>
+              <div class="form-group">
+                <label for="prepDate" class="required">Preparation Date</label>
+                <input type="date" id="prepDate" name="prepDate" class="form-control" required>
+                <div class="invalid-feedback">Please select preparation date</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="organicWasteSource" class="required">Organic Waste Source</label>
+                <input type="text" id="organicWasteSource" name="organicWasteSource" class="form-control" required>
+                <div class="invalid-feedback">Please enter waste source</div>
+              </div>
+              <div class="form-group">
+                <label for="moisturePercentage" class="required">Moisture Percentage</label>
+                <input type="number" id="moisturePercentage" name="moisturePercentage" class="form-control" step="0.01" min="0" max="100" required>
+                <div class="invalid-feedback">Please enter valid moisture percentage (0-100)</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="wasteParticleSize" class="required">Waste Particle Size</label>
+                <select id="wasteParticleSize" name="wasteParticleSize" class="form-control" required>
+                  <option value="">Select size</option>
+                  <option value="fine">Fine</option>
+                  <option value="medium">Medium</option>
+                  <option value="coarse">Coarse</option>
+                </select>
+                <div class="invalid-feedback">Please select particle size</div>
+              </div>
+              <div class="form-group">
+                <label for="foreignMatter" class="required">Foreign Matter Present</label>
+                <select id="foreignMatter" name="foreignMatter" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                <div class="invalid-feedback">Please select foreign matter status</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="handlerOperator" class="required">Handler/Operator</label>
+              <input type="text" id="handlerOperator" name="handlerOperator" class="form-control" required>
+              <div class="invalid-feedback">Please enter handler/operator name</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Substrate Preparation</button>
+          </form>
+        </div>
+
+        <!-- Health & Intervention Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-heartbeat"></i> Health & Intervention</h2>
+          <form id="healthInterventionForm">
+            <div class="form-row">
+            <div class="form-group">
+                <label for="healthDate" class="required">Health Check Date</label>
+                <input type="date" id="healthDate" name="healthDate" class="form-control" required>
+                <div class="invalid-feedback">Please select health check date</div>
+              </div>
+              <div class="form-group">
+                <label for="trayBatchId" class="required">Tray/Batch ID</label>
+                <input type="text" id="trayBatchId" name="trayBatchId" class="form-control" required>
+                <div class="invalid-feedback">Please enter tray/batch ID</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="observedIssue" class="required">Observed Issue</label>
+                <input type="text" id="observedIssue" name="observedIssue" class="form-control" required>
+                <div class="invalid-feedback">Please enter observed issue</div>
+              </div>
+              <div class="form-group">
+                <label for="severity" class="required">Severity</label>
+                <select id="severity" name="severity" class="form-control" required>
+                  <option value="">Select severity</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+                <div class="invalid-feedback">Please select severity level</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="followUpDate">Follow-up Date</label>
+                <input type="date" id="followUpDate" name="followUpDate" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="resolved">Issue Resolved</label>
+                <select id="resolved" name="resolved" class="form-control">
+                  <option value="">Select status</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="actionTaken" class="required">Action Taken</label>
+              <textarea id="actionTaken" name="actionTaken" class="form-control" rows="3" required></textarea>
+              <div class="invalid-feedback">Please enter action taken</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="comments">Comments</label>
+              <textarea id="comments" name="comments" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Health Record</button>
+          </form>
+        </div>
+
+        <!-- Harvest & Yield Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-basket-shopping"></i> Harvest & Yield</h2>
+          <form id="harvestYieldForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="harvestDate" class="required">Harvest Date</label>
+                <input type="date" id="harvestDate" name="harvestDate" class="form-control" required>
+                <div class="invalid-feedback">Please select harvest date</div>
+              </div>
+              <div class="form-group">
+                <label for="trayBatchId" class="required">Tray/Batch ID</label>
+                <input type="text" id="trayBatchId" name="trayBatchId" class="form-control" required>
+                <div class="invalid-feedback">Please enter tray/batch ID</div>
+        </div>
+      </div>
+      
+            <div class="form-row">
+              <div class="form-group">
+                <label for="instarStage" class="required">Instar Stage</label>
+                <input type="number" id="instarStage" name="instarStage" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="larvae_collected_kg" class="required">Larvae Collected (kg)</label>
+                <input type="number" id="larvae_collected_kg" name="larvae_collected_kg" class="form-control" step="0.1" required>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="processingMethod" class="required">Processing Method</label>
+                <select id="processingMethod" name="processingMethod" class="form-control" required>
+                  <option value="">Select method</option>
+                  <option value="sieving">Sieving</option>
+                  <option value="self_harvesting">Self Harvesting</option>
+                  <option value="manual">Manual</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="invalid-feedback">Please select processing method</div>
+              </div>
+              <div class="form-group">
+                <label for="storageTemp">Storage Temperature (°C)</label>
+                <input type="number" id="storageTemp" name="storageTemp" class="form-control" step="0.01">
+              </div>
+        </div>
+        
+            <div class="form-group">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
+        </div>
+        
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Harvest Record</button>
+          </form>
+        </div>
+
+        <!-- Feeding Schedule Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-clock"></i> Feeding Schedule</h2>
+          <form id="feedingScheduleForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="feeding_date" class="required">Date</label>
+                <input type="date" id="feeding_date" name="feeding_date" class="form-control" required>
+                <div class="invalid-feedback">Please select a date</div>
+              </div>
+              <div class="form-group">
+                <label for="tray_batch_id" class="required">Tray/Batch ID</label>
+                <input type="text" id="tray_batch_id" name="tray_batch_id" class="form-control" required>
+                <div class="invalid-feedback">Please enter tray/batch ID</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="larvae_age_days" class="required">Larvae Age (days)</label>
+                <input type="number" id="larvae_age_days" name="larvae_age_days" class="form-control" min="0" required>
+                <div class="invalid-feedback">Please enter valid age</div>
+              </div>
+              <div class="form-group">
+                <label for="larvae_weight_g" class="required">Larvae Weight (g)</label>
+                <input type="number" id="larvae_weight_g" name="larvae_weight_g" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="feed_type" class="required">Feed Type</label>
+                <input type="text" id="feed_type" name="feed_type" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="feed_quantity_kg" class="required">Feed Quantity (kg)</label>
+                <input type="number" id="feed_quantity_kg" name="feed_quantity_kg" class="form-control" step="0.1" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="start_weight_g">Start Weight (g)</label>
+                <input type="number" id="start_weight_g" name="start_weight_g" class="form-control" step="0.1" min="0">
+              </div>
+              <div class="form-group">
+                <label for="end_weight_kg">End Weight (kg)</label>
+                <input type="number" id="end_weight_kg" name="end_weight_kg" class="form-control" step="0.1" min="0">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="consumption_g">Consumption (g)</label>
+                <input type="number" id="consumption_g" name="consumption_g" class="form-control" step="0.1" min="0">
+              </div>
+              <div class="form-group">
+                <label for="operator" class="required">Operator</label>
+                <input type="text" id="operator" name="operator" class="form-control" required>
+                <div class="invalid-feedback">Please enter operator name</div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Feeding Schedule</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Drying Process Section -->
+      <div id="drying" class="section">
+        <h1><i class="fas fa-wind"></i> Drying Process</h1>
+        
+        <!-- SOP Guidelines Panel -->
+        <div class="guidelines-panel">
+          <h3><i class="fas fa-info-circle"></i> Drying Process Guidelines</h3>
+          <ul>
+            <li><strong>Small-Scale Drying:</strong> 4kg sand per 1.5kg wet larvae, heat to 200°C, mix for 15 minutes</li>
+            <li><strong>Commercial Drying:</strong> 100kg sand per 40kg wet larvae, drum dryer at 200°C, finish in greenhouse</li>
+            <li><strong>Sun Drying:</strong> 10kg sand per 4kg wet larvae, 4-6 hours in direct sunlight</li>
+            <li><strong>Quality Control:</strong> Ensure complete sand removal, check for contaminants, maintain proper ratios</li>
+            <li><strong>Expected Ratio:</strong> 3:1 (wet to dried weight)</li>
+          </ul>
+        </div>
+
+        <!-- Drying Batch Information Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-clipboard-list"></i> Batch Information</h2>
+          <form id="dryingBatchForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="batchId" class="required">Batch ID</label>
+                <input type="text" id="batchId" name="batchId" class="form-control" required>
+                <div class="invalid-feedback">Please enter a batch ID</div>
+              </div>
+              <div class="form-group">
+                <label for="dryingDate" class="required">Drying Date</label>
+                <input type="date" id="dryingDate" name="dryingDate" class="form-control" required>
+                <div class="invalid-feedback">Please select a drying date</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dryingMethod" class="required">Drying Method</label>
+                <input type="text" id="dryingMethod" name="dryingMethod" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="personnel" class="required">Personnel</label>
+                <input type="text" id="personnel" name="personnel" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="status" class="required">Status</label>
+                <select id="status" name="status" class="form-control" required>
+                  <option value="in_progress" selected>In Progress</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create Batch</button>
+          </form>
+        </div>
+
+        <!-- Input Records Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-box-open"></i> Input Records</h2>
+          <form id="dryingInputForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="batchIdInput" class="required">Batch ID</label>
+                <input type="text" id="batchIdInput" name="batchId" class="form-control" required>
+                <div class="invalid-feedback">Please enter a batch ID</div>
+              </div>
+              <div class="form-group">
+                <label for="wetHarvested" class="required">Wet Harvested (kg)</label>
+                <input type="number" id="wetHarvested" name="wetHarvested" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="wetPlaced" class="required">Wet Placed for Drying (kg)</label>
+                <input type="number" id="wetPlaced" name="wetPlaced" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+              <div class="form-group">
+                <label for="driedByPersonnel" class="required">Dried by Personnel (kg)</label>
+                <input type="number" id="driedByPersonnel" name="driedByPersonnel" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sandUsed" class="required">Sand Used (kg)</label>
+                <input type="number" id="sandUsed" name="sandUsed" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+              <div class="form-group">
+                <label for="sandReused">Sand Reused? (kg)</label>
+                <input type="number" id="sandReused" name="sandReused" class="form-control" step="0.1" min="0">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="inputNotes">Notes</label>
+              <textarea id="inputNotes" name="notes" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Input Records</button>
+          </form>
+        </div>
+
+        <!-- Output Records Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-box"></i> Output Records</h2>
+          <form id="dryingOutputForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="batchIdOutput" class="required">Batch ID</label>
+                <input type="text" id="batchIdOutput" name="batchId" class="form-control" required>
+                <div class="invalid-feedback">Please enter a batch ID</div>
+              </div>
+              <div class="form-group">
+                <label for="driedProduced" class="required">Dried Produced (kg)</label>
+                <input type="number" id="driedProduced" name="driedProduced" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="solarDryingTaken">Solar Drying Taken (kg)</label>
+                <input type="number" id="solarDryingTaken" name="solarDryingTaken" class="form-control" step="0.1" min="0">
+              </div>
+              <div class="form-group">
+                <label for="siloBagStored">Stored in Silo Bag (kg)</label>
+                <input type="number" id="siloBagStored" name="siloBagStored" class="form-control" step="0.1" min="0">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="driedSold">Sold (kg)</label>
+                <input type="number" id="driedSold" name="driedSold" class="form-control" step="0.1" min="0">
+              </div>
+              <div class="form-group">
+                <label for="actualRatio">Actual Ratio</label>
+                <input type="text" id="actualRatio" name="actualRatio" class="form-control" readonly>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="yieldPercentage">Yield %</label>
+                <input type="text" id="yieldPercentage" name="yieldPercentage" class="form-control" readonly>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="outputNotes">Notes</label>
+              <textarea id="outputNotes" name="notes" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Output Records</button>
+          </form>
+        </div>
+
+        <!-- Quality Control Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-check-circle"></i> Quality Control</h2>
+          <form id="qualityControlForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="batchIdQC" class="required">Batch ID</label>
+                <input type="text" id="batchIdQC" name="batchId" class="form-control" required>
+                <div class="invalid-feedback">Please enter a batch ID</div>
+              </div>
+              <div class="form-group">
+                <label for="qcDate" class="required">QC Date</label>
+                <input type="date" id="qcDate" name="qcDate" class="form-control" required>
+                <div class="invalid-feedback">Please select a QC date</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sandRemoval" class="required">Sand Removal Status</label>
+                <select id="sandRemoval" name="sandRemoval" class="form-control" required>
+                  <option value="">Select status</option>
+                  <option value="complete">Complete</option>
+                  <option value="partial">Partial</option>
+                  <option value="poor">Poor</option>
+                </select>
+                <div class="invalid-feedback">Please select sand removal status</div>
+              </div>
+              <div class="form-group">
+                <label for="contaminantsFound">Contaminants Found</label>
+                <select id="contaminantsFound" name="contaminantsFound" class="form-control" multiple>
+                  <option value="sand">Sand</option>
+                  <option value="stones">Stones</option>
+                  <option value="frass">Frass</option>
+                  <option value="debris">Debris</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="help-text">Hold Ctrl/Cmd to select multiple items</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="colorQuality" class="required">Color Quality</label>
+                <select id="colorQuality" name="colorQuality" class="form-control" required>
+                  <option value="">Select quality</option>
+                  <option value="excellent">Excellent (Light)</option>
+                  <option value="good">Good</option>
+                  <option value="fair">Fair</option>
+                  <option value="poor">Poor (Dark)</option>
+                </select>
+                <div class="invalid-feedback">Please select color quality</div>
+              </div>
+              <div class="form-group">
+                <label for="moistureLevel" class="required">Moisture Level</label>
+                <select id="moistureLevel" name="moistureLevel" class="form-control" required>
+                  <option value="">Select level</option>
+                  <option value="dry">Dry</option>
+                  <option value="slightly_moist">Slightly Moist</option>
+                  <option value="moist">Moist</option>
+                  <option value="wet">Wet</option>
+                </select>
+                <div class="invalid-feedback">Please select moisture level</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="qcPersonnel" class="required">QC Personnel</label>
+              <input type="text" id="qcPersonnel" name="qcPersonnel" class="form-control" required>
+              <div class="invalid-feedback">Please enter QC personnel name</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="qcNotes">QC Notes</label>
+              <textarea id="qcNotes" name="notes" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save QC Records</button>
+          </form>
+        </div>
+
+        <!-- Review & Approval Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-clipboard-check"></i> Review & Approval</h2>
+          <form id="reviewApprovalForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="batchIdReview" class="required">Batch ID</label>
+                <input type="text" id="batchIdReview" name="batchId" class="form-control" required>
+                <div class="invalid-feedback">Please enter a batch ID</div>
+              </div>
+              <div class="form-group">
+                <label for="reviewedBy" class="required">Reviewed By</label>
+                <input type="text" id="reviewedBy" name="reviewedBy" class="form-control" required>
+                <div class="invalid-feedback">Please enter reviewer name</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reviewDate" class="required">Review Date</label>
+                <input type="date" id="reviewDate" name="reviewDate" class="form-control" required>
+                <div class="invalid-feedback">Please select a review date</div>
+              </div>
+              <div class="form-group">
+                <label for="approvalStatus" class="required">Approval Status</label>
+                <select id="approvalStatus" name="approvalStatus" class="form-control" required>
+                  <option value="">Select status</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="pending">Pending</option>
+                </select>
+                <div class="invalid-feedback">Please select approval status</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="approvalComments">Comments</label>
+              <textarea id="approvalComments" name="comments" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Review</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Reports Section -->
+      <div id="report" class="section">
+        <h1><i class="fas fa-chart-pie"></i> Reports</h1>
+        <div class="subsection">
+          <h2><i class="fas fa-balance-scale"></i> Harvest Efficiency Analysis</h2>
+          <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="fas fa-chart-line"></i> Harvest Efficiency Analysis</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Analyze the wet-to-dry harvest efficiency for each batch. The target conversion ratio is 3:1.</p>
+                <button id="analyzeHarvestEfficiencyBtn" class="btn btn-primary mb-3"><i class="fas fa-search"></i> Analyze</button>
+                <button id="sendHarvestReportBtn" class="btn btn-success mb-3"><i class="fas fa-envelope"></i> Email Harvest Report to Admin</button>
+                <div class="chart-container mt-3" style="position: relative; height: 40vh; max-width: 100%;">
+                    <canvas id="harvestEfficiencyChart"></canvas>
+                </div>
+                <div id="efficiencyComparisonTable" class="mt-4 table-responsive"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Records Section -->
+      <div id="records" class="section">
+          <h1><i class="fas fa-archive"></i> Daily Records</h1>
+          <div class="subsection">
+              <h2>Filter Records</h2>
+              <form id="recordsFilterForm">
+                  <div class="form-row">
+                      <div class="form-group">
+                          <label for="recordDate">Select Date</label>
+                          <input type="date" id="recordDate" name="recordDate" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="recordSection">Select Section</label>
+                          <select id="recordSection" name="recordSection" class="form-control">
+                              <option value="all">All Sections</option>
+                              <option value="waste">Waste Management</option>
+                              <option value="hatchery">Hatchery</option>
+                              <option value="feeding">Larval Feeding</option>
+                              <option value="drying">Drying Process</option>
+                              <option value="facility">Fly Facility</option>
+                          </select>
+                      </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Fetch Records</button>
+              </form>
+          </div>
+          <div class="subsection">
+              <h2>Results</h2>
+              <div id="recordsResults" class="records-container">
+                  <p>Please select a date to view records.</p>
+              </div>
+          </div>
+      </div>
+
+      <!-- Add Fly Facility Section before the closing body tag -->
+      <!-- Fly Facility Section -->
+      <div id="facility" class="section">
+        <h1><i class="fas fa-warehouse"></i> Fly Facility Management</h1>
+        
+        <!-- SOP Guidelines -->
+        <div class="guidelines-panel">
+          <h3><i class="fas fa-info-circle"></i> Fly Facility SOP Guidelines</h3>
+          <ul>
+            <li><strong>Cage Specifications:</strong> 3m x 3m cages with insect netting and resting flaps</li>
+            <li><strong>Environmental Control:</strong> Maintain 28-30°C temperature and >60% humidity</li>
+            <li><strong>Lighting:</strong> Minimum 12 hours light exposure daily</li>
+            <li><strong>Perimeter Protection:</strong> 3ft deep moat around facility</li>
+            <li><strong>Pupae Stocking:</strong> Minimum 50kg every 2 weeks per love cage</li>
+            <li><strong>Egg Collection:</strong> Harvest 3x weekly using specialized scrapers</li>
+          </ul>
+        </div>
+
+        <!-- Cage Monitoring Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-clipboard-check"></i> Cage Monitoring</h2>
+          <form id="cageMonitoringForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="monitoringDate" class="required">Date</label>
+                <input type="date" id="monitoringDate" name="date" class="form-control" required>
+                <div class="invalid-feedback">Please select monitoring date</div>
+              </div>
+              <div class="form-group">
+                <label for="cageId" class="required">Cage ID</label>
+                <input type="text" id="cageId" name="cageId" class="form-control" required>
+                <div class="invalid-feedback">Please enter cage ID</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cageTemperature" class="required">Temperature (°C)</label>
+                <input type="number" id="cageTemperature" name="temperature" class="form-control" step="0.1" required>
+                <div class="invalid-feedback">Please enter valid temperature (°C)</div>
+              </div>
+              <div class="form-group">
+                <label for="cageHumidity" class="required">Humidity (%)</label>
+                <input type="number" id="cageHumidity" name="humidity" class="form-control" step="1" required>
+                <div class="invalid-feedback">Please enter valid humidity (%)</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="lightingHours" class="required">Lighting Hours</label>
+                <input type="number" id="lightingHours" name="lightingHours" class="form-control" min="0" max="24" step="0.5" required>
+                <div class="invalid-feedback">Please enter lighting duration</div>
+              </div>
+              <div class="form-group">
+                <label for="ventilationStatus" class="required">Ventilation OK?</label>
+                <select id="ventilationStatus" name="ventilationOk" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No - Needs Attention</option>
+                </select>
+                <div class="invalid-feedback">Please select ventilation status</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cageCleaned" class="required">Cage Cleaned?</label>
+                <select id="cageCleaned" name="cageCleaned" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No - Scheduled</option>
+                </select>
+                <div class="invalid-feedback">Please select cleaning status</div>
+              </div>
+              <div class="form-group">
+                <label for="deadFliesRemoved" class="required">Dead Flies Removed?</label>
+                <select id="deadFliesRemoved" name="deadFliesRemoved" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No - Found</option>
+                </select>
+                <div class="invalid-feedback">Please select status</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cageDamage" class="required">Cage Damage?</label>
+                <select id="cageDamage" name="cageDamage" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="no">No</option>
+                  <option value="minor">Minor - Needs Repair</option>
+                  <option value="major">Major - Replacement Needed</option>
+                </select>
+                <div class="invalid-feedback">Please select damage status</div>
+              </div>
+              <div class="form-group">
+                <label for="damageNotes">Damage Notes</label>
+                <input type="text" id="damageNotes" name="damageNotes" class="form-control">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cageNotes">Additional Notes</label>
+              <textarea id="cageNotes" name="additionalNotes" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Cage Data</button>
+          </form>
+        </div>
+
+        <!-- Facility Maintenance Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-tools"></i> Facility Maintenance</h2>
+          <form id="facilityMaintenanceForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="maintenanceDate" class="required">Date</label>
+                <input type="date" id="maintenanceDate" name="date" class="form-control" required>
+                <div class="invalid-feedback">Please select date</div>
+              </div>
+              <div class="form-group">
+                <label for="moatCheck" class="required">Moat Check</label>
+                <select id="moatCheck" name="moatCheck" class="form-control" required>
+                  <option value="">Select status</option>
+                  <option value="full">Full - Operational</option>
+                  <option value="low">Low - Needs Refill</option>
+                  <option value="empty">Empty - Urgent Refill</option>
+                </select>
+                <div class="invalid-feedback">Please select moat status</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="antsPresent" class="required">Ants Present?</label>
+                <select id="antsPresent" name="antsPresent" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="no">No</option>
+                  <option value="few">Few</option>
+                  <option value="many">Infestation</option>
+                </select>
+                <div class="invalid-feedback">Please select ant status</div>
+              </div>
+              <div class="form-group">
+                <label for="rodentsPresent" class="required">Rodents/Lizards Seen?</label>
+                <select id="rodentsPresent" name="rodentsPresent" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+                <div class="invalid-feedback">Please select status</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="birdNetOk" class="required">Bird Net OK?</label>
+                <select id="birdNetOk" name="birdNetOk" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes - Intact</option>
+                  <option value="damaged">Damaged</option>
+                </select>
+                <div class="invalid-feedback">Please select net status</div>
+              </div>
+              <div class="form-group">
+                <label for="trenchRefilled" class="required">Trench Refilled?</label>
+                <select id="trenchRefilled" name="trenchRefilled" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No - Needed</option>
+                </select>
+                <div class="invalid-feedback">Please select trench status</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="maintenanceNotes" class="required">Maintenance Notes</label>
+              <textarea id="maintenanceNotes" name="maintenanceNotes" class="form-control" rows="3" required></textarea>
+              <div class="invalid-feedback">Please enter maintenance details</div>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Maintenance Record</button>
+          </form>
+        </div>
+
+        <!-- Pupae Transition Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-exchange-alt"></i> Pupae Transition</h2>
+          <form id="pupaeTransitionForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="transitionDate" class="required">Date</label>
+                <input type="date" id="transitionDate" name="date" class="form-control" required>
+                <div class="invalid-feedback">Please select date</div>
+              </div>
+              <div class="form-group">
+                <label for="loveCageId" class="required">Love Cage ID</label>
+                <input type="text" id="loveCageId" name="love_cage_id" class="form-control" required>
+                <div class="invalid-feedback">Please enter cage ID</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pupaeWeightAdded" class="required">Pupae Added (kg)</label>
+                <input type="number" id="pupaeWeightAdded" name="pupae_weight_added_kg" class="form-control" min="0" step="0.1" required>
+                <div class="invalid-feedback">Please enter weight added</div>
+              </div>
+              <div class="form-group">
+                <label for="oldPupaeRemoved" class="required">Old Pupae Removed (kg)</label>
+                <input type="number" id="oldPupaeRemoved" name="old_pupae_removed_kg" class="form-control" min="0" step="0.1" required>
+                <div class="invalid-feedback">Please enter weight removed</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="deadFliesRemovedTransition" class="required">Dead Flies Removed</label>
+                <select id="deadFliesRemovedTransition" name="dead_flies_removed" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="none">None</option>
+                  <option value="few">Few (1-10)</option>
+                  <option value="many">Many (>10)</option>
+                </select>
+                <div class="invalid-feedback">Please select status</div>
+              </div>
+              <div class="form-group">
+                <label for="waterPointsChecked" class="required">Water Points Checked?</label>
+                <select id="waterPointsChecked" name="water_points_checked" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes - All OK</option>
+                  <option value="some">Some Need Refill</option>
+                  <option value="no">Not Checked</option>
+                </select>
+                <div class="invalid-feedback">Please select water status</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="newEggCratesInstalled" class="required">New Egg Crates Installed?</label>
+                <select id="newEggCratesInstalled" name="new_egg_crates_installed" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                <div class="invalid-feedback">Please select status</div>
+              </div>
+              <div class="form-group">
+                <label for="numberOfCrates">Number of Crates</label>
+                <input type="number" id="numberOfCrates" name="number_of_crates" class="form-control" min="0" max="10">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="transitionNotes">Transition Notes</label>
+              <textarea id="transitionNotes" name="notes" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Transition Record</button>
+          </form>
+        </div>
+
+        <!-- Egg Collection Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-egg"></i> Egg Collection</h2>
+          <form id="eggCollectionForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="eggCollectionDate" class="required">Date</label>
+                <input type="date" id="eggCollectionDate" name="date" class="form-control" required>
+                <div class="invalid-feedback">Please select date</div>
+              </div>
+              <div class="form-group">
+                <label for="collectionTime" class="required">Time</label>
+                <select id="collectionTime" name="time" class="form-control" required>
+                  <option value="">Select time</option>
+                  <option value="early_morning">Early Morning (5-7AM)</option>
+                  <option value="late_evening">Late Evening (5-7PM)</option>
+                  <option value="other">Other Time</option>
+                </select>
+                <div class="invalid-feedback">Please select collection time</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="eggCageId" class="required">Cage ID</label>
+                <input type="text" id="eggCageId" name="cageId" class="form-control" required>
+                <div class="invalid-feedback">Please enter cage ID</div>
+              </div>
+              <div class="form-group">
+                <label for="eggsCollected" class="required">Eggs Collected (g)</label>
+                <input type="number" id="eggsCollected" name="eggsCollected" class="form-control" min="0" step="0.1" required>
+                <div class="invalid-feedback">Please enter egg weight</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="baitReplaced" class="required">Bait Replaced?</label>
+                <select id="baitReplaced" name="baitReplaced" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                <div class="invalid-feedback">Please select bait status</div>
+              </div>
+              <div class="form-group">
+                <label for="eggsIntact" class="required">Eggs Intact?</label>
+                <select id="eggsIntact" name="eggsIntact" class="form-control" required>
+                  <option value="">Select</option>
+                  <option value="yes">Yes - All Good</option>
+                  <option value="some">Some Damaged</option>
+                  <option value="many">Many Damaged</option>
+                </select>
+                <div class="invalid-feedback">Please select egg condition</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="collectorName" class="required">Collector Name</label>
+                <input type="text" id="collectorName" name="collectorName" class="form-control" required>
+                <div class="invalid-feedback">Please enter collector name</div>
+              </div>
+              <div class="form-group">
+                <label for="collectionMethod" class="required">Collection Method</label>
+                <select id="collectionMethod" name="collectionMethod" class="form-control" required>
+                  <option value="">Select method</option>
+                  <option value="razor">Razor Scraper</option>
+                  <option value="specialized">Specialized Tool</option>
+                  <option value="manual">Manual</option>
+                </select>
+                <div class="invalid-feedback">Please select method</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="eggCollectionNotes">Collection Notes</label>
+              <textarea id="eggCollectionNotes" name="notes" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Collection Record</button>
+          </form>
+        </div>
+
+        <!-- Bait Preparation Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-flask"></i> Bait Preparation</h2>
+          <form id="baitPreparationForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="barrelId" class="required">Barrel ID</label>
+                <input type="text" id="barrelId" name="barrelId" class="form-control" required>
+                <div class="invalid-feedback">Please enter barrel ID</div>
+              </div>
+              <div class="form-group">
+                <label for="baitType" class="required">Bait Type</label>
+                <select id="baitType" name="baitType" class="form-control" required>
+                  <option value="">Select type</option>
+                  <option value="frass_mix">Frass Mix</option>
+                  <option value="blood">Blood</option>
+                  <option value="combined">Combined</option>
+                </select>
+                <div class="invalid-feedback">Please select bait type</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ingredientsAdded" class="required">Ingredients Added</label>
+                <textarea id="ingredientsAdded" name="ingredientsAdded" class="form-control" rows="2" required></textarea>
+                <div class="invalid-feedback">Please list ingredients</div>
+              </div>
+              <div class="form-group">
+                <label for="fermentationStart" class="required">Start Date</label>
+                <input type="date" id="fermentationStart" name="startDate" class="form-control" required>
+                <div class="invalid-feedback">Please select start date</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fermentationReady" class="required">Ready Date</label>
+                <input type="date" id="fermentationReady" name="readyDate" class="form-control" required>
+                <div class="invalid-feedback">Please select ready date</div>
+              </div>
+              <div class="form-group">
+                <label for="usedInCages">Used in Cage ID(s)</label>
+                <input type="text" id="usedInCages" name="usedInCageIds" class="form-control" placeholder="Separate multiple IDs with commas">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="baitNotes">Preparation Notes</label>
+              <textarea id="baitNotes" name="notes" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Bait Preparation</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Hatchery Section -->
+      <div id="hatchery" class="section">
+        <h1><i class="fas fa-egg"></i> Hatchery Management</h1>
+        
+        <!-- SOP Guidelines -->
+        <div class="guidelines-panel">
+          <h3><i class="fas fa-info-circle"></i> Hatchery SOP Guidelines</h3>
+          <ul>
+            <li><strong>Temperature:</strong> Maintain 28-30°C; use vents if exceeding 30°C</li>
+            <li><strong>Humidity:</strong> Keep at 70-80%; use humidifier or pour water on floor</li>
+            <li><strong>Pest Control:</strong> Use insect netting, apply oil at container bases</li>
+            <li><strong>Egg Handling:</strong> Use PVC pipes/bottles, avoid water contact, 5g per shower</li>
+            <li><strong>Feed Preparation:</strong> Mix to 60% moisture; use brewery waste, wheat bran, or potatoes</li>
+          </ul>
+        </div>
+
+        <!-- Batch Information Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-clipboard-list"></i> Batch Information</h2>
+          <form id="batchInformationForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="batchDate" class="required">Date</label>
+                <input type="date" id="batchDate" name="batch_date" class="form-control" required>
+                <div class="invalid-feedback">Please select a date</div>
+              </div>
+              <div class="form-group">
+                <label for="batchNumber" class="required">Batch Number</label>
+                <input type="text" id="batchNumber" name="batch_number" class="form-control" required>
+                <div class="invalid-feedback">Please enter batch number</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="eggIncubationDate" class="required">Egg Incubation Date</label>
+                <input type="date" id="eggIncubationDate" name="egg_incubation_date" class="form-control" required>
+                <div class="invalid-feedback">Please select incubation date</div>
+              </div>
+              <div class="form-group">
+                <label for="totalEggsGrams" class="required">Total Eggs (grams)</label>
+                <input type="number" id="totalEggsGrams" name="total_eggs_grams" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="expectedHatchDate" class="required">Expected Hatch Date</label>
+                <input type="date" id="expectedHatchDate" name="expected_hatch_date" class="form-control" required>
+                <div class="invalid-feedback">Please select expected hatch date</div>
+              </div>
+              <div class="form-group">
+                <label for="actualHatchDate">Actual Hatch Date</label>
+                <input type="date" id="actualHatchDate" name="actual_hatch_date" class="form-control">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="hatchDays">Days to Hatch</label>
+                <input type="number" id="hatchDays" name="hatch_days" class="form-control" min="0">
+              </div>
+              <div class="form-group">
+                <label for="supervisorName" class="required">Supervisor Name</label>
+                <input type="text" id="supervisorName" name="supervisor_name" class="form-control" required>
+                <div class="invalid-feedback">Please enter supervisor name</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="batchNotes">Notes</label>
+              <textarea id="batchNotes" name="notes" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Batch Information</button>
+          </form>
+        </div>
+
+        <!-- Feeding Records Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-utensils"></i> Feeding Records</h2>
+          <form id="feedingRecordsForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="feedingDate" class="required">Date</label>
+                <input type="date" id="feedingDate" name="feeding_date" class="form-control" required>
+                <div class="invalid-feedback">Please select a date</div>
+              </div>
+              <div class="form-group">
+                <label for="batchId" class="required">Batch ID</label>
+                <input type="text" id="batchId" name="batch_id" class="form-control" required>
+                <div class="invalid-feedback">Please enter batch ID</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="feedPer5g" class="required">Feed per 5g Eggs (grams)</label>
+                <input type="number" id="feedPer5g" name="feed_per_5g_eggs_grams" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+              <div class="form-group">
+                <label for="totalFeedUsed" class="required">Total Feed Used (grams)</label>
+                <input type="number" id="totalFeedUsed" name="total_feed_used_grams" class="form-control" step="0.1" min="0" required>
+                <div class="invalid-feedback">Please enter valid weight</div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="daysToUtilize" class="required">Days to Utilize</label>
+                <input type="number" id="daysToUtilize" name="days_to_utilize" class="form-control" min="1" required>
+                <div class="invalid-feedback">Please enter number of days</div>
+              </div>
+              <div class="form-group">
+                <label for="feedType" class="required">Feed Type</label>
+                <input type="text" id="feedType" name="feedType" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="feed_quantity_kg" class="required">Feed Quantity (kg)</label>
+                <input type="number" id="feed_quantity_kg" name="feed_quantity_kg" class="form-control" step="0.1" required>
+                <label for="feedSource">Feed Source</label>
+                <input type="text" id="feedSource" name="feed_source" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="distributionMethod" class="required">Distribution Method</label>
+                <input type="text" id="distributionMethod" name="distribution_method" class="form-control" required>
+                <div class="invalid-feedback">Please enter distribution method</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="feedingNotes">Notes</label>
+              <textarea id="feedingNotes" name="notes" class="form-control" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Feeding Record</button>
+          </form>
+        </div>
+
+        <!-- Environmental Monitoring Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-thermometer-half"></i> Environmental Monitoring</h2>
+          <form id="hatcheryEnvironmentalMonitoringForm" class="needs-validation" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="monitoringDate" class="required">Date</label>
+                <input type="date" id="monitoringDate" name="monitoring_date" class="form-control" required>
+                <div class="invalid-feedback">Please select a date</div>
+              </div>
+              <div class="form-group">
+                <label for="temperature" class="required">Temperature (°C)</label>
+                <input type="number" id="temperature" name="temperature_c" class="form-control" step="0.1" required>
+                <div class="invalid-feedback">Please enter temperature</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="humidity" class="required">Humidity (%)</label>
+                <input type="number" id="humidity" name="humidity_percent" class="form-control" step="0.1" required>
+                <div class="invalid-feedback">Please enter humidity</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="adjustmentsMade">Adjustments Made</label>
+              <textarea id="adjustmentsMade" name="adjustments_made" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Monitoring Record</button>
+          </form>
+        </div>
+
+        <!-- Cleaning & Sanitation Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-broom"></i> Cleaning & Sanitation</h2>
+          <form id="cleaningForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cleaningDate" class="required">Date</label>
+                <input type="date" id="cleaningDate" name="cleaning_date" class="form-control" required>
+                <div class="invalid-feedback">Please select a date</div>
+              </div>
+              <div class="form-group">
+                <label for="areasCleaned" class="required">Areas Cleaned</label>
+                <input type="text" id="areasCleaned" name="areas_cleaned" class="form-control" required>
+                <div class="invalid-feedback">Please enter areas cleaned</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cleaningMaterials" class="required">Materials Used</label>
+                <input type="text" id="cleaningMaterials" name="cleaning_materials" class="form-control" required>
+                <div class="invalid-feedback">Please enter cleaning materials</div>
+              </div>
+              <div class="form-group">
+                <label for="cleaningPersonnel" class="required">Person Responsible</label>
+                <input type="text" id="cleaningPersonnel" name="cleaning_personnel" class="form-control" required>
+                <div class="invalid-feedback">Please enter responsible person</div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="cleaningRemarks">Remarks/Issues Identified</label>
+              <textarea id="cleaningRemarks" name="remarks" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Cleaning Record</button>
+          </form>
+        </div>
+
+        <!-- Problems & Solutions Subsection -->
+        <div class="subsection">
+          <h2><i class="fas fa-exclamation-triangle"></i> Problems & Solutions</h2>
+          <form id="problemsSolutionsForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="problemDate" class="required">Date</label>
+                <input type="date" id="problemDate" name="problem_date" class="form-control" required>
+                <div class="invalid-feedback">Please select a date</div>
+              </div>
+              <div class="form-group">
+                <label for="problemIdentified" class="required">Problem Identified</label>
+                <select id="problemIdentified" name="problem_identified" class="form-control" required>
+                  <option value="">Select problem</option>
+                  <option value="larvae_escaping">Young Larvae Escaping</option>
+                  <option value="high_temperature">Excess Temperature</option>
+                  <option value="dry_feed">Feed Too Dry</option>
+                  <option value="feed_not_utilized">Feed Not Fully Utilized</option>
+                  <option value="mites">Mites in Feed</option>
+                  <option value="ants">Ant Infestation</option>
+                  <option value="rodents">Rodents/Lizards</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="invalid-feedback">Please select problem</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="proposedSolution" class="required">Proposed Solution</label>
+                <textarea id="proposedSolution" name="proposed_solution" class="form-control" rows="2" required></textarea>
+                <div class="invalid-feedback">Please enter proposed solution</div>
+              </div>
+              <div class="form-group">
+                <label for="responsiblePerson" class="required">Person Responsible</label>
+                <input type="text" id="responsiblePerson" name="responsible_person" class="form-control" required>
+                <div class="invalid-feedback">Please enter responsible person</div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="daysToImplement">Days to Implement</label>
+                <input type="number" id="daysToImplement" name="days_to_implement" class="form-control" min="0">
+              </div>
+              <div class="form-group">
+                <label for="resolutionStatus">Resolution Status</label>
+                <select id="resolutionStatus" name="resolution_status" class="form-control">
+                  <option value="">Select status</option>
+                  <option value="pending">Pending</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="failed">Failed</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="problemComments">Additional Comments</label>
+              <textarea id="problemComments" name="additional_comments" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Problem Report</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Customers Section -->
+      <div id="customers" class="section">
+        <h1><i class="fas fa-users"></i> Customers</h1>
+        <form id="customerForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="customerName" class="required">Name</label>
+              <input type="text" id="customerName" name="name" class="form-control" required>
+              <div class="invalid-feedback">Please enter customer name</div>
+            </div>
+            <div class="form-group">
+              <label for="customerContact">Contact</label>
+              <input type="text" id="customerContact" name="contact" class="form-control">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="customerEmail">Email</label>
+              <input type="email" id="customerEmail" name="email" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="customerAddress">Address</label>
+              <input type="text" id="customerAddress" name="address" class="form-control">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Customer</button>
+        </form>
+        <h2>Customer List</h2>
+        <table class="table" id="customerTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Email</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Customer records will go here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Sales Section -->
+      <div id="sales" class="section">
+        <h1><i class="fas fa-cash-register"></i> Sales</h1>
+        <form id="salesForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="saleDate" class="required">Date</label>
+              <input type="date" id="saleDate" name="date" class="form-control" required>
+              <div class="invalid-feedback">Please select a date</div>
+            </div>
+            <div class="form-group">
+              <label for="saleCustomer" class="required">Customer</label>
+              <select id="saleCustomer" name="customer" class="form-control" required>
+                <option value="">Select customer</option>
+                <!-- Customer options will be populated dynamically -->
+              </select>
+              <div class="invalid-feedback">Please select a customer</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="saleProduct">Product/Service</label>
+              <input type="text" id="saleProduct" name="product" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="saleQuantity">Quantity</label>
+              <input type="number" id="saleQuantity" name="quantity" class="form-control" step="1" min="1">
+            </div>
+            <div class="form-group">
+              <label for="saleAmount" class="required">Amount</label>
+              <input type="number" id="saleAmount" name="amount" class="form-control" step="0.01" min="0" required>
+              <div class="invalid-feedback">Please enter amount</div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success">Add Sale</button>
+        </form>
+        <h2>Sales Records</h2>
+        <table class="table" id="salesTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Product/Service</th>
+              <th>Quantity</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sales records will go here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Deliveries Section -->
+      <div id="deliveries" class="section">
+        <h1><i class="fas fa-truck"></i> Deliveries</h1>
+        <form id="deliveryForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="deliveryDate" class="required">Date</label>
+              <input type="date" id="deliveryDate" name="date" class="form-control" required>
+              <div class="invalid-feedback">Please select a date</div>
+            </div>
+            <div class="form-group">
+              <label for="deliveryCustomer" class="required">Customer</label>
+              <select id="deliveryCustomer" name="customer" class="form-control" required>
+                <option value="">Select customer</option>
+                <!-- Customer options will be populated dynamically -->
+              </select>
+              <div class="invalid-feedback">Please select a customer</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="deliveryProduct">Product/Service</label>
+              <input type="text" id="deliveryProduct" name="product" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="deliveryQuantity">Quantity</label>
+              <input type="number" id="deliveryQuantity" name="quantity" class="form-control" step="1" min="1">
+            </div>
+            <div class="form-group">
+              <label for="deliveryStatus" class="required">Delivery Status</label>
+              <select id="deliveryStatus" name="status" class="form-control" required>
+                <option value="">Select status</option>
+                <option value="Pending">Pending</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+              <div class="invalid-feedback">Please select a status</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="deliveryNotes">Notes</label>
+            <textarea id="deliveryNotes" name="notes" class="form-control" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Delivery</button>
+        </form>
+        <h2>Delivery Records</h2>
+        <table class="table" id="deliveryTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Product/Service</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Delivery records will go here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Customer Feedback Section -->
+      <div id="feedback" class="section">
+        <h1><i class="fas fa-comment-dots"></i> Customer Feedback</h1>
+        <form id="feedbackForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="feedbackDate" class="required">Date</label>
+              <input type="date" id="feedbackDate" name="date" class="form-control" required>
+              <div class="invalid-feedback">Please select a date</div>
+            </div>
+            <div class="form-group">
+              <label for="feedbackCustomer" class="required">Customer</label>
+              <select id="feedbackCustomer" name="customer" class="form-control" required>
+                <option value="">Select customer</option>
+                <!-- Customer options will be populated dynamically -->
+              </select>
+              <div class="invalid-feedback">Please select a customer</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="feedbackText" class="required">Feedback</label>
+            <textarea id="feedbackText" name="feedback" class="form-control" rows="3" required></textarea>
+            <div class="invalid-feedback">Please enter feedback</div>
+          </div>
+          <div class="form-group">
+            <label for="feedbackRating" class="required">Rating</label>
+            <select id="feedbackRating" name="rating" class="form-control" required>
+              <option value="">Select rating</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+            <div class="invalid-feedback">Please select a rating</div>
+          </div>
+          <button type="submit" class="btn btn-success">Submit Feedback</button>
+        </form>
+        <h2>Feedback Records</h2>
+        <table class="table" id="feedbackTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Feedback</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Feedback records will go here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    // Navigation handling
+    function showSection(sectionId, element) {
+      // Hide all sections
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Remove active class from all nav links
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+      });
+      
+      // Show selected section only if it exists
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.classList.add('active');
+      } else {
+        console.warn(`Section with id '${sectionId}' not found.`);
+        return;
+      }
+      
+      // Add active class to clicked nav link
+      if (element) {
+        element.classList.add('active');
+      }
+    }
+
+    // Form submission handling
+    function showAlert(type, message) {
+      const successAlert = document.getElementById('successAlert');
+      const errorAlert = document.getElementById('errorAlert');
+      
+      if (type === 'success') {
+        successAlert.querySelector('span').textContent = message;
+        successAlert.style.display = 'block';
+        errorAlert.style.display = 'none';
+      } else {
+        errorAlert.querySelector('span').textContent = message;
+        errorAlert.style.display = 'block';
+        successAlert.style.display = 'none';
+      }
+      
+      // Hide alert after 5 seconds
+      setTimeout(() => {
+        successAlert.style.display = 'none';
+        errorAlert.style.display = 'none';
+      }, 5000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Form elements (waste sourcing handled in scripts.js)
+      const forms = {
+        storageRecords: document.getElementById('storageRecordsForm'),
+        processingRecords: document.getElementById('processingRecordsForm'),
+        wasteEnvironmentalMonitoring: document.getElementById('wasteEnvironmentalMonitoringForm'),
+        substratePreparation: document.getElementById('substratePreparationForm'),
+        // Add hatchery forms
+        batchInfo: document.getElementById('batchInformationForm'),
+        feedingRecords: document.getElementById('feedingRecordsForm'),
+        hatcheryEnvironmentalMonitoring: document.getElementById('hatcheryEnvironmentalMonitoringForm'),
+        cleaningSanitation: document.getElementById('cleaningForm'),
+        problemsSolutions: document.getElementById('problemsSolutionsForm'),
+        // Additional forms
+        healthIntervention: document.getElementById('healthInterventionForm'),
+        harvestYield: document.getElementById('harvestYieldForm'),
+        feedingSchedule: document.getElementById('feedingScheduleForm'),
+        cageMonitoring: document.getElementById('cageMonitoringForm'),
+        facilityMaintenance: document.getElementById('facilityMaintenanceForm'),
+        pupaeTransition: document.getElementById('pupaeTransitionForm'),
+        eggCollection: document.getElementById('eggCollectionForm'),
+        baitPreparation: document.getElementById('baitPreparationForm'),
+        // New forms
+        customers: document.getElementById('customerForm'),
+        sales: document.getElementById('salesForm'),
+        deliveries: document.getElementById('deliveryForm'),
+        feedback: document.getElementById('feedbackForm')
+      };
+
+      // Log all form elements to check if they exist
+      console.log('Available forms:', Object.entries(forms).map(([key, form]) => ({
+        key,
+        exists: !!form,
+        id: form ? form.id : 'not found'
+      })));
+
+      // API endpoint mapping (waste sourcing handled in scripts.js)
+      const apiEndpoints = {
+        'storageRecords': 'storage-records',
+        'processingRecords': 'processing-records',
+        'wasteEnvironmentalMonitoring': 'environmental-monitoring-waste',
+        'substratePreparation': 'substrate-preparation',
+        // Add hatchery endpoints
+        'batchInfo': 'hatchery/batch',
+        'feedingRecords': 'hatchery/feeding',
+        'hatcheryEnvironmentalMonitoring': 'hatchery/monitoring',
+        'cleaningSanitation': 'hatchery/cleaning',
+        'problemsSolutions': 'hatchery/problems',
+        // Additional endpoints
+        'healthIntervention': 'hatchery/health',
+        'harvestYield': 'hatchery/harvest',
+        'feedingSchedule': 'feeding/schedule',
+        'cageMonitoring': 'hatchery/cage',
+        'facilityMaintenance': 'hatchery/maintenance',
+        'pupaeTransition': 'hatchery/pupae',
+        'eggCollection': 'hatchery/eggs',
+        'baitPreparation': 'hatchery/bait',
+        // New endpoints
+        'customers': 'customers',
+        'sales': 'sales',
+        'deliveries': 'deliveries',
+        'feedback': 'feedback'
+      };
+
+      // Show alert with message
+      function showAlert(type, message) {
+        console.log(`Showing ${type} alert:`, message);
+        const alertId = type === 'success' ? 'successAlert' : 'errorAlert';
+        const alertElement = document.getElementById(alertId);
+        
+        if (!alertElement) {
+          console.error(`Alert element with id ${alertId} not found`);
+          return;
+        }
+
+        // Find or create the message span
+        let messageSpan = alertElement.querySelector('span');
+        if (!messageSpan) {
+          messageSpan = document.createElement('span');
+          alertElement.appendChild(messageSpan);
+        }
+
+        // Set the message
+        messageSpan.textContent = message;
+        
+        // Show the alert
+        alertElement.style.display = 'block';
+        
+        // Hide after 5 seconds
+        setTimeout(() => {
+          alertElement.style.display = 'none';
+        }, 5000);
+      }
+
+      // Form validation
+      function validateForm(form, formType) {
+        console.log(`Validating form: ${formType}`);
+        const errors = {};
+        const formData = new FormData(form);
+        
+        // Log all form fields and their values
+        console.log('Form fields:', Array.from(formData.entries()));
+        
+        // Common validation for all forms
+        form.querySelectorAll('[required]').forEach(field => {
+          if (!field.value.trim()) {
+            errors[field.name] = `${field.name.replace(/([A-Z])/g, ' $1').trim()} is required`;
+            field.classList.add('is-invalid');
+            console.log(`Missing required field: ${field.name}`);
+          } else {
+            field.classList.remove('is-invalid');
+          }
+        });
+
+        // Form-specific validation
+        switch(formType) {
+          case 'batchInfo':
+            console.log('Validating batch info form');
+            const totalEggsGrams = parseFloat(formData.get('total_eggs_grams'));
+            if (totalEggsGrams <= 0) {
+              errors.total_eggs_grams = 'Total eggs must be greater than 0';
+              console.log('Invalid total eggs:', totalEggsGrams);
+            }
+            break;
+          case 'feedingRecords':
+            console.log('Validating feeding records form');
+            const feedPer5gEggs = parseFloat(formData.get('feed_per_5g_eggs_grams'));
+            const totalFeedUsed = parseFloat(formData.get('total_feed_used_grams'));
+            if (feedPer5gEggs <= 0) {
+              errors.feed_per_5g_eggs_grams = 'Feed per 5g eggs must be greater than 0';
+              console.log('Invalid feed per 5g eggs:', feedPer5gEggs);
+            }
+            if (totalFeedUsed <= 0) {
+              errors.total_feed_used_grams = 'Total feed used must be greater than 0';
+              console.log('Invalid total feed used:', totalFeedUsed);
+            }
+            break;
+          case 'hatcheryEnvironmentalMonitoring':
+            console.log('Validating hatchery environmental monitoring form');
+            const hatcheryTemp = parseFloat(formData.get('temperature_c'));
+            const hatcheryHumidity = parseFloat(formData.get('humidity_percent'));
+            if (hatcheryTemp < -50 || hatcheryTemp > 100) {
+              errors.temperature_c = 'Temperature must be between -50 and 100';
+              console.log('Invalid temperature:', hatcheryTemp);
+            }
+            if (hatcheryHumidity < 0 || hatcheryHumidity > 100) {
+              errors.humidity_percent = 'Humidity must be between 0 and 100';
+              console.log('Invalid humidity:', hatcheryHumidity);
+            }
+            break;
+          // ... other form validations ...
+        }
+
+        if (Object.keys(errors).length > 0) {
+          console.log('Validation errors:', errors);
+        }
+
+        return Object.keys(errors).length === 0 ? null : errors;
+      }
+
+      // Handle form submission
+      async function handleSubmit(form, formType) {
+        console.log(`Handling submission for form: ${formType}`);
+        try {
+          // Validate form
+          const errors = validateForm(form, formType);
+          if (errors) {
+            Object.entries(errors).forEach(([field, message]) => {
+              const input = form.querySelector(`[name="${field}"]`);
+              if (input) {
+                input.classList.add('is-invalid');
+                const feedback = input.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                  feedback.textContent = message;
+                }
+              }
+            });
+            showAlert('error', 'Please fix the errors in the form');
+            return;
+          }
+
+          // Collect form data
+          const formData = new FormData(form);
+          const data = {};
+          formData.forEach((value, key) => {
+            // Convert numeric fields
+            const numericFields = [
+              'wasteWeight', 'storageDuration', 'wasteProcessed', 'wasteReduction',
+              'temperature', 'humidity', 'moisturePercentage', 'total_eggs_grams',
+              'feed_per_5g_eggs_grams', 'total_feed_used_grams', 'days_to_utilize',
+              'temperature_c', 'humidity_percent', 'days_to_implement'
+            ];
+            
+            if (numericFields.includes(key)) {
+              data[key] = value ? parseFloat(value) : null;
+            } else {
+              data[key] = value;
+            }
+          });
+
+          // Get the correct API endpoint
+          const endpoint = apiEndpoints[formType];
+          if (!endpoint) {
+            throw new Error(`No API endpoint defined for form type: ${formType}`);
+          }
+
+          console.log('Sending data to:', `/api/${endpoint}`);
+          console.log('Data:', data);
+
+          // Send data to backend
+          const response = await fetch(`/api/${endpoint}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            mode: 'cors',
+            credentials: 'include',
+            body: JSON.stringify(data)
+          });
+
+          console.log('Response status:', response.status);
+
+          if (!response.ok) {
+            // Try to get error message from JSON, otherwise use status text
+            let errorMessage = `Request failed with status: ${response.status} ${response.statusText}`;
+            try {
+              const errorResult = await response.json();
+              errorMessage = errorResult.error || errorMessage;
+            } catch (e) {
+              // The response was not JSON, maybe it's HTML or plain text
+              console.error("Could not parse error response as JSON.", e);
+            }
+            throw new Error(errorMessage);
+          }
+
+          const result = await response.json();
+          console.log('Response data:', result);
+
+          if (result.success !== false) { // Check for explicit success: false
+            showAlert('success', result.message || 'Data submitted successfully!');
+            form.reset();
+          } else {
+            throw new Error(result.error || 'An unknown error occurred.');
+          }
+        } catch (error) {
+          console.error(`Submission error for ${formType}:`, error);
+          if (error.message.includes('Failed to fetch')) {
+            showAlert('error', 'Unable to connect to the server. Please ensure it is running.');
+          } else {
+            showAlert('error', error.message || 'An error occurred during submission.');
+          }
+        }
+      }
+
+      // Add event listeners to forms
+      Object.entries(forms).forEach(([formType, form]) => {
+        if (form) {
+          console.log(`Adding event listeners to form: ${formType}`);
+          // Remove invalid state on input
+          form.querySelectorAll('input, select, textarea').forEach(input => {
+            input.addEventListener('input', function() {
+              this.classList.remove('is-invalid');
+            });
+          });
+
+          // Handle form submission
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log(`Form submitted: ${formType}`);
+            handleSubmit(this, formType);
+          });
+        } else {
+          console.warn(`Form not found: ${formType}`);
+        }
+      });
+    });
+  </script>
+
+  <!-- Waste sourcing form handling moved to scripts.js -->
+
+  <script>
+    // Form validation and submission handling (waste sourcing handled in scripts.js)
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = {
+            storageRecords: document.getElementById('storageRecordsForm'),
+            processingRecords: document.getElementById('processingRecordsForm'),
+            wasteEnvironmentalMonitoring: document.getElementById('wasteEnvironmentalMonitoringForm'),
+            substratePreparation: document.getElementById('substratePreparationForm'),
+            // Add hatchery forms
+            batchInfo: document.getElementById('batchInformationForm'),
+            feedingRecords: document.getElementById('feedingRecordsForm'),
+            hatcheryEnvironmentalMonitoring: document.getElementById('hatcheryEnvironmentalMonitoringForm'),
+            cleaningSanitation: document.getElementById('cleaningForm'),
+            problemsSolutions: document.getElementById('problemsSolutionsForm'),
+            // Additional forms
+            healthIntervention: document.getElementById('healthInterventionForm'),
+            harvestYield: document.getElementById('harvestYieldForm'),
+            feedingSchedule: document.getElementById('feedingScheduleForm'),
+            cageMonitoring: document.getElementById('cageMonitoringForm'),
+            facilityMaintenance: document.getElementById('facilityMaintenanceForm'),
+            pupaeTransition: document.getElementById('pupaeTransitionForm'),
+            eggCollection: document.getElementById('eggCollectionForm'),
+            baitPreparation: document.getElementById('baitPreparationForm'),
+            // New forms
+            customers: document.getElementById('customerForm'),
+            sales: document.getElementById('salesForm'),
+            deliveries: document.getElementById('deliveryForm'),
+            feedback: document.getElementById('feedbackForm')
+        };
+
+        // API endpoint mapping (waste sourcing handled in scripts.js)
+        const apiEndpoints = {
+            'storageRecords': 'storage-records',
+            'processingRecords': 'processing-records',
+            'wasteEnvironmentalMonitoring': 'environmental-monitoring-waste',
+            'substratePreparation': 'substrate-preparation',
+            // Add hatchery endpoints
+            'batchInfo': 'hatchery/batch',
+            'feedingRecords': 'hatchery/feeding',
+            'hatcheryEnvironmentalMonitoring': 'hatchery/monitoring',
+            'cleaningSanitation': 'hatchery/cleaning',
+            'problemsSolutions': 'hatchery/problems',
+            // Additional endpoints
+            'healthIntervention': 'hatchery/health',
+            'harvestYield': 'hatchery/harvest',
+            'feedingSchedule': 'feeding/schedule',
+            'cageMonitoring': 'hatchery/cage',
+            'facilityMaintenance': 'hatchery/maintenance',
+            'pupaeTransition': 'hatchery/pupae',
+            'eggCollection': 'hatchery/eggs',
+            'baitPreparation': 'hatchery/bait',
+            // New endpoints
+            'customers': 'customers',
+            'sales': 'sales',
+            'deliveries': 'deliveries',
+            'feedback': 'feedback'
+        };
+
+        // Show notification
+        function showNotification(type, message) {
+            const notification = document.getElementById('notification');
+            notification.className = `alert alert-${type}`;
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        // Form validation
+        function validateForm(form, formType) {
+            const errors = {};
+            const formData = new FormData(form);
+            
+            // Common validation for all forms
+            form.querySelectorAll('[required]').forEach(field => {
+                if (!field.value.trim()) {
+                    errors[field.name] = `${field.name.replace(/([A-Z])/g, ' $1').trim()} is required`;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            // Form-specific validation
+            switch(formType) {
+                case 'wasteSourcing':
+                    const wasteWeight = parseFloat(formData.get('wasteWeight'));
+                    if (wasteWeight <= 0) {
+                        errors.wasteWeight = 'Weight must be greater than 0';
+                    }
+                    break;
+                case 'storageRecords':
+                    const storageDuration = parseInt(formData.get('storageDuration'));
+                    if (storageDuration <= 0) {
+                        errors.storageDuration = 'Storage duration must be greater than 0';
+                    }
+                    break;
+                case 'processingRecords':
+                    const wasteProcessed = parseFloat(formData.get('wasteProcessed'));
+                    if (wasteProcessed <= 0) {
+                        errors.wasteProcessed = 'Waste processed must be greater than 0';
+                    }
+                    const wasteReduction = parseFloat(formData.get('wasteReduction'));
+                    if (wasteReduction && (wasteReduction < 0 || wasteReduction > 100)) {
+                        errors.wasteReduction = 'Waste reduction must be between 0 and 100';
+                    }
+                    break;
+                case 'wasteEnvironmentalMonitoring':
+                    const temperature = parseFloat(formData.get('temperature'));
+                    if (temperature < -50 || temperature > 100) {
+                        errors.temperature = 'Temperature must be between -50 and 100';
+                    }
+                    const humidity = parseFloat(formData.get('humidity'));
+                    if (humidity < 0 || humidity > 100) {
+                        errors.humidity = 'Humidity must be between 0 and 100';
+                    }
+                    break;
+                case 'substratePreparation':
+                    const moisturePercentage = parseFloat(formData.get('moisturePercentage'));
+                    if (moisturePercentage < 0 || moisturePercentage > 100) {
+                        errors.moisturePercentage = 'Moisture percentage must be between 0 and 100';
+                    }
+                    break;
+                // Add hatchery form validations
+                case 'batchInfo':
+                    const totalEggsGrams = parseFloat(formData.get('total_eggs_grams'));
+                    if (totalEggsGrams <= 0) {
+                        errors.total_eggs_grams = 'Total eggs must be greater than 0';
+                    }
+                    break;
+                case 'feedingRecords':
+                    const feedPer5gEggs = parseFloat(formData.get('feed_per_5g_eggs_grams'));
+                    const totalFeedUsed = parseFloat(formData.get('total_feed_used_grams'));
+                    if (feedPer5gEggs <= 0) {
+                        errors.feed_per_5g_eggs_grams = 'Feed per 5g eggs must be greater than 0';
+                    }
+                    if (totalFeedUsed <= 0) {
+                        errors.total_feed_used_grams = 'Total feed used must be greater than 0';
+                    }
+                    break;
+                case 'hatcheryEnvironmentalMonitoring':
+                    const hatcheryTemp = parseFloat(formData.get('temperature_c'));
+                    const hatcheryHumidity = parseFloat(formData.get('humidity_percent'));
+                    if (hatcheryTemp < -50 || hatcheryTemp > 100) {
+                        errors.temperature_c = 'Temperature must be between -50 and 100';
+                    }
+                    if (hatcheryHumidity < 0 || hatcheryHumidity > 100) {
+                        errors.humidity_percent = 'Humidity must be between 0 and 100';
+                    }
+                    break;
+                // Add validations for other forms
+                case 'healthIntervention':
+                case 'harvestYield':
+                case 'feedingSchedule':
+                case 'cageMonitoring':
+                case 'facilityMaintenance':
+                case 'pupaeTransition':
+                case 'eggCollection':
+                case 'baitPreparation':
+                    // Add specific validations for these forms if needed
+                    break;
+            }
+
+            return Object.keys(errors).length === 0 ? null : errors;
+        }
+
+        // Handle form submission
+        async function handleSubmit(form, formType) {
+            try {
+                // Validate form
+                const errors = validateForm(form, formType);
+                if (errors) {
+                    Object.entries(errors).forEach(([field, message]) => {
+                        const input = form.querySelector(`[name="${field}"]`);
+                        if (input) {
+                            input.classList.add('is-invalid');
+                            const feedback = input.nextElementSibling;
+                            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                                feedback.textContent = message;
+                            }
+                        }
+                    });
+                    showNotification('danger', 'Please fix the errors in the form');
+                    return;
+                }
+
+                // Collect form data
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => {
+                    // Convert numeric fields
+                    const numericFields = [
+                        'wasteWeight', 'storageDuration', 'wasteProcessed', 'wasteReduction',
+                        'temperature', 'humidity', 'moisturePercentage', 'total_eggs_grams',
+                        'feed_per_5g_eggs_grams', 'total_feed_used_grams', 'days_to_utilize',
+                        'temperature_c', 'humidity_percent', 'days_to_implement'
+                    ];
+                    
+                    if (numericFields.includes(key)) {
+                        data[key] = value ? parseFloat(value) : null;
+                    } else {
+                        data[key] = value;
+                    }
+                });
+
+                // Get the correct API endpoint
+                const endpoint = apiEndpoints[formType];
+                if (!endpoint) {
+                    throw new Error(`No API endpoint defined for form type: ${formType}`);
+                }
+
+                console.log('Sending data to:', `/api/${endpoint}`);
+                console.log('Data:', data);
+
+                // Send data to backend
+                const response = await fetch(`/api/${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    mode: 'cors',
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    // Try to get error message from JSON, otherwise use status text
+                    let errorMessage = `Request failed with status: ${response.status} ${response.statusText}`;
+                    try {
+                        const errorResult = await response.json();
+                        errorMessage = errorResult.error || errorMessage;
+                    } catch (e) {
+                        // The response was not JSON, maybe it's HTML or plain text
+                        console.error("Could not parse error response as JSON.", e);
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const result = await response.json();
+                console.log('Response data:', result);
+
+                if (result.success !== false) { // Check for explicit success: false
+                    showNotification('success', result.message || 'Data submitted successfully!');
+                    form.reset();
+                } else {
+                    throw new Error(result.error || 'An unknown error occurred.');
+                }
+            } catch (error) {
+                console.error(`Submission error for ${formType}:`, error);
+                showNotification('danger', error.message || 'An error occurred during submission.');
+            }
+        }
+
+        // Add event listeners to forms
+        Object.entries(forms).forEach(([formType, form]) => {
+            if (form) {
+                // Remove invalid state on input
+                form.querySelectorAll('input, select, textarea').forEach(input => {
+                    input.addEventListener('input', function() {
+                        this.classList.remove('is-invalid');
+                    });
+                });
+
+                // Handle form submission
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleSubmit(this, formType);
+                });
+            }
+        });
+    });
+  </script>
+
+  <!-- Waste sourcing form handling moved to scripts.js -->
+
+  <script src="scripts.js"></script>
+  
+  <script>
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        window.location.href = '/logout';
+      }
+    }
+  </script>
+
+  <script>
+    // Drying Process Section JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+      const dryingForms = [
+        { id: 'dryingBatchForm', endpoint: 'drying/batch' },
+        { id: 'dryingInputForm', endpoint: 'drying/input' },
+        { id: 'dryingOutputForm', endpoint: 'drying/output' },
+        { id: 'qualityControlForm', endpoint: 'drying/qc' },
+        { id: 'reviewApprovalForm', endpoint: 'drying/review' }
+      ];
+
+      // Create alert elements for drying section
+      let dryingSuccessAlert = document.createElement('div');
+      dryingSuccessAlert.className = 'alert alert-success';
+      dryingSuccessAlert.style.display = 'none';
+      dryingSuccessAlert.innerHTML = '<i class="fas fa-check-circle"></i> <span></span>';
+      let dryingErrorAlert = document.createElement('div');
+      dryingErrorAlert.className = 'alert alert-danger';
+      dryingErrorAlert.style.display = 'none';
+      dryingErrorAlert.innerHTML = '<i class="fas fa-exclamation-circle"></i> <span></span>';
+      const dryingSection = document.getElementById('drying');
+      dryingSection.insertBefore(dryingSuccessAlert, dryingSection.children[1]);
+      dryingSection.insertBefore(dryingErrorAlert, dryingSection.children[2]);
+
+      function showDryingAlert(type, message) {
+        if (type === 'success') {
+          dryingSuccessAlert.querySelector('span').textContent = message;
+          dryingSuccessAlert.style.display = 'block';
+          dryingErrorAlert.style.display = 'none';
+        } else {
+          dryingErrorAlert.querySelector('span').textContent = message;
+          dryingErrorAlert.style.display = 'block';
+          dryingSuccessAlert.style.display = 'none';
+        }
+        setTimeout(() => {
+          dryingSuccessAlert.style.display = 'none';
+          dryingErrorAlert.style.display = 'none';
+        }, 5000);
+      }
+
+      dryingForms.forEach(({ id, endpoint }) => {
+        const form = document.getElementById(id);
+        if (form) {
+          form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            // Remove previous validation
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            // Validate required fields
+            let valid = true;
+            form.querySelectorAll('[required]').forEach(input => {
+              if (!input.value.trim()) {
+                input.classList.add('is-invalid');
+                valid = false;
+              }
+            });
+            if (!valid) {
+              showDryingAlert('error', 'Please fill in all required fields.');
+              return;
+            }
+            // Collect form data
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+              // Handle multi-select
+              const input = form.querySelector(`[name="${key}"]`);
+              if (input && input.multiple) {
+                data[key] = Array.from(formData.getAll(key));
+              } else {
+                data[key] = value;
+              }
+            });
+            // Calculate actual ratio and yield for output form
+            if (id === 'dryingOutputForm') {
+              const wetPlaced = parseFloat(document.getElementById('wetPlaced')?.value || 0);
+              const driedProduced = parseFloat(document.getElementById('driedProduced')?.value || 0);
+              if (wetPlaced && driedProduced) {
+                const ratio = (wetPlaced / driedProduced).toFixed(2);
+                const yieldPercent = ((driedProduced / wetPlaced) * 100).toFixed(2);
+                document.getElementById('actualRatio').value = ratio;
+                document.getElementById('yieldPercentage').value = yieldPercent;
+                data.actualRatio = ratio;
+                data.yieldPercentage = yieldPercent;
+              }
+            }
+            // Send data to backend
+            try {
+              const response = await fetch(`/api/${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+              });
+              const result = await response.json();
+              if (response.ok) {
+                showDryingAlert('success', result.message || 'Data saved successfully!');
+                form.reset();
+              } else {
+                showDryingAlert('error', result.error || 'Failed to save data.');
+              }
+            } catch (err) {
+              showDryingAlert('error', 'Network or server error.');
+            }
+          });
+          // Remove invalid state on input
+          form.querySelectorAll('input, select, textarea').forEach(input => {
+            input.addEventListener('input', function() {
+              this.classList.remove('is-invalid');
+            });
+          });
+        }
+      });
+    });
+  </script>
+
+  <script>
+    // Drying Output Efficiency Analysis for Reports
+    document.addEventListener('DOMContentLoaded', function() {
+      // ... existing code ...
+      const analyzeBtn = document.getElementById('analyzeDryingBtn');
+      const resultsDiv = document.getElementById('dryingEfficiencyResults');
+      if (analyzeBtn) {
+        analyzeBtn.addEventListener('click', async function() {
+          resultsDiv.innerHTML = '<p>Loading...</p>';
+          try {
+            // Fetch drying output records from backend
+            const response = await fetch('http://localhost:5000/api/drying/output/all');
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Failed to fetch data');
+            if (!Array.isArray(data.records) || data.records.length === 0) {
+              resultsDiv.innerHTML = '<p>No drying output records found.</p>';
+              return;
+            }
+            // Build table
+            let html = `<table class="table"><thead><tr><th>Batch ID</th><th>Wet Placed (kg)</th><th>Dried Produced (kg)</th><th>Actual Ratio</th><th>Yield %</th><th>Status</th></tr></thead><tbody>`;
+            data.records.forEach(record => {
+              const wet = parseFloat(record.wetPlaced || record.wet_placed || 0);
+              const dried = parseFloat(record.driedProduced || record.dried_produced || 0);
+              let ratio = wet && dried ? (wet / dried).toFixed(2) : '';
+              let yieldPercent = wet && dried ? ((dried / wet) * 100).toFixed(2) : '';
+              // Compare to guideline: expected ratio 3:1 (wet:dried), yield ~33%
+              let status = '';
+              if (ratio && yieldPercent) {
+                if (Math.abs(ratio - 3) <= 0.3 && Math.abs(yieldPercent - 33.33) <= 5) {
+                  status = '<span style="color:green;font-weight:bold;">Efficient</span>';
+                } else {
+                  status = '<span style="color:red;font-weight:bold;">Inefficient</span>';
+                }
+              } else {
+                status = '<span style="color:gray;">Incomplete Data</span>';
+              }
+              html += `<tr><td>${record.batchId || record.batch_id || ''}</td><td>${wet}</td><td>${dried}</td><td>${ratio}</td><td>${yieldPercent}</td><td>${status}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            html += '<p><strong>Guideline:</strong> Wet:Dried Ratio ≈ 3:1, Yield ≈ 33%</p>';
+            resultsDiv.innerHTML = html;
+          } catch (err) {
+            resultsDiv.innerHTML = `<p style="color:red;">${err.message}</p>`;
+          }
+        });
+      }
+    });
+  </script>
+
+  <script>
+    // ... existing code ...
+    document.addEventListener('DOMContentLoaded', function() {
+      // ... existing code ...
+      // Full Process Flow Efficiency Analysis for Reports
+      const analyzeFullBtn = document.getElementById('analyzeFullProcessBtn');
+      const fullResultsDiv = document.getElementById('fullProcessResults');
+      const fullProcessChart = document.getElementById('fullProcessChart');
+      let chartInstance = null;
+      if (analyzeFullBtn) {
+        analyzeFullBtn.addEventListener('click', async function() {
+          fullResultsDiv.innerHTML = '<p>Loading...</p>';
+          if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+          try {
+            // Fetch all records for each stage
+            const [wasteRes, harvestRes, dryingInputRes, dryingOutputRes] = await Promise.all([
+              fetch('http://localhost:5000/api/waste-sourcing/all'),
+              fetch('http://localhost:5000/api/feeding/harvest/all'),
+              fetch('http://localhost:5000/api/drying/input/all'),
+              fetch('http://localhost:5000/api/drying/output/all')
+            ]);
+            const [wasteData, harvestData, dryingInputData, dryingOutputData] = await Promise.all([
+              wasteRes.json(),
+              harvestRes.json(),
+              dryingInputRes.json(),
+              dryingOutputRes.json()
+            ]);
+            if (!wasteRes.ok || !harvestRes.ok || !dryingInputRes.ok || !dryingOutputRes.ok) {
+              throw new Error('Failed to fetch all required data.');
+            }
+            // Build a map of batchId to all relevant data
+            const batchMap = {};
+            // Waste Sourcing
+            (wasteData.records || []).forEach(r => {
+              const batchId = r.batchId || r.batch_id;
+              if (!batchId) return;
+              if (!batchMap[batchId]) batchMap[batchId] = {};
+              batchMap[batchId].waste = parseFloat(r.wasteWeight || r.quantity || 0);
+              batchMap[batchId].wasteDate = r.collectionDate || r.collection_date || r.date || null;
+            });
+            // Larvae Harvested
+            (harvestData.records || []).forEach(r => {
+              const batchId = r.batchId || r.batch_id;
+              if (!batchId) return;
+              if (!batchMap[batchId]) batchMap[batchId] = {};
+              batchMap[batchId].larvae = parseFloat(r.larvaeCollected || r.larvae_harvested || r.quantity || 0);
+              batchMap[batchId].harvestDate = r.harvestDate || r.date || null;
+            });
+            // Wet Placed for Drying
+            (dryingInputData.records || []).forEach(r => {
+              const batchId = r.batchId || r.batch_id || r.batchIdInput;
+              if (!batchId) return;
+              if (!batchMap[batchId]) batchMap[batchId] = {};
+              batchMap[batchId].wet = parseFloat(r.wetPlaced || r.wet_placed || 0);
+              batchMap[batchId].dryingDate = r.dryingDate || r.date || null;
+            });
+            // Dried Output
+            (dryingOutputData.records || []).forEach(r => {
+              const batchId = r.batchId || r.batch_id || r.batchIdOutput;
+              if (!batchId) return;
+              if (!batchMap[batchId]) batchMap[batchId] = {};
+              batchMap[batchId].dried = parseFloat(r.driedProduced || r.dried_produced || 0);
+              batchMap[batchId].outputDate = r.dryingDate || r.date || null;
+            });
+            // Build table
+            let html = `<table class="table"><thead><tr><th>Batch ID</th><th>Waste Sourced (kg)</th><th>Larvae Harvested (kg)</th><th>Wet Placed (kg)</th><th>Dried Output (kg)</th><th>Waste→Larvae</th><th>Larvae→Dried</th><th>Waste→Dried</th><th>Status</th></tr></thead><tbody>`;
+            // For chart data
+            const batchLabels = [];
+            const driedOutputs = [];
+            const wasteToLarvaeArr = [];
+            const larvaeToDriedArr = [];
+            const wasteToDriedArr = [];
+            const harvestDates = [];
+            const monthlyHarvest = {};
+            Object.entries(batchMap).forEach(([batchId, vals]) => {
+              const waste = vals.waste || 0;
+              const larvae = vals.larvae || 0;
+              const wet = vals.wet || 0;
+              const dried = vals.dried || 0;
+              const wasteToLarvae = waste && larvae ? (larvae / waste).toFixed(2) : '';
+              const larvaeToDried = larvae && dried ? (dried / larvae).toFixed(2) : '';
+              const wasteToDried = waste && dried ? (dried / waste).toFixed(2) : '';
+              // Example guideline: waste→larvae >= 0.15, larvae→dried ≈ 0.33, waste→dried ≈ 0.05
+              let status = '';
+              if (wasteToLarvae && larvaeToDried && wasteToDried) {
+                if (wasteToLarvae >= 0.15 && Math.abs(larvaeToDried - 0.33) <= 0.05 && Math.abs(wasteToDried - 0.05) <= 0.02) {
+                  status = '<span style="color:green;font-weight:bold;">Efficient</span>';
+                } else {
+                  status = '<span style="color:red;font-weight:bold;">Inefficient</span>';
+                }
+              } else {
+                status = '<span style="color:gray;">Incomplete Data</span>';
+              }
+              html += `<tr><td>${batchId}</td><td>${waste}</td><td>${larvae}</td><td>${wet}</td><td>${dried}</td><td>${wasteToLarvae}</td><td>${larvaeToDried}</td><td>${wasteToDried}</td><td>${status}</td></tr>`;
+              // Chart data
+              batchLabels.push(batchId);
+              driedOutputs.push(dried);
+              wasteToLarvaeArr.push(wasteToLarvae ? parseFloat(wasteToLarvae) : null);
+              larvaeToDriedArr.push(larvaeToDried ? parseFloat(larvaeToDried) : null);
+              wasteToDriedArr.push(wasteToDried ? parseFloat(wasteToDried) : null);
+              // Monthly harvest
+              let dateStr = vals.outputDate || vals.dryingDate || vals.harvestDate || vals.wasteDate;
+              if (dateStr) {
+                let month = dateStr.slice(0,7); // YYYY-MM
+                if (!monthlyHarvest[month]) monthlyHarvest[month] = 0;
+                monthlyHarvest[month] += dried;
+                harvestDates.push(dateStr);
+              }
+            });
+            html += '</tbody></table>';
+            html += '<p><strong>Guidelines:</strong> Waste→Larvae ≥ 0.15, Larvae→Dried ≈ 0.33, Waste→Dried ≈ 0.05</p>';
+            fullResultsDiv.innerHTML = html;
+            // Draw chart
+            const months = Object.keys(monthlyHarvest).sort();
+            const monthlyDried = months.map(m => monthlyHarvest[m]);
+            chartInstance = new Chart(fullProcessChart, {
+              type: 'bar',
+              data: {
+                labels: batchLabels,
+                datasets: [
+                  {
+                    label: 'Dried Output (kg) per Batch',
+                    data: driedOutputs,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    yAxisID: 'y',
+                  },
+                  {
+                    label: 'Waste→Larvae Ratio',
+                    data: wasteToLarvaeArr,
+                    type: 'line',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: false,
+                    yAxisID: 'y1',
+                  },
+                  {
+                    label: 'Larvae→Dried Ratio',
+                    data: larvaeToDriedArr,
+                    type: 'line',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    fill: false,
+                    yAxisID: 'y1',
+                  },
+                  {
+                    label: 'Waste→Dried Ratio',
+                    data: wasteToDriedArr,
+                    type: 'line',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: false,
+                    yAxisID: 'y1',
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: 'Batch Efficiency and Output'
+                  },
+                  legend: {
+                    position: 'top',
+                  }
+                },
+                scales: {
+                  y: {
+                    type: 'linear',
+                    position: 'left',
+                    title: { display: true, text: 'Dried Output (kg)' }
+                  },
+                  y1: {
+                    type: 'linear',
+                    position: 'right',
+                    min: 0,
+                    max: 1,
+                    title: { display: true, text: 'Conversion Ratios' },
+                    grid: { drawOnChartArea: false }
+                  }
+                }
+              }
+            });
+            // Monthly trend chart (line)
+            if (months.length > 0) {
+              let monthlyCanvas = document.createElement('canvas');
+              monthlyCanvas.id = 'monthlyHarvestChart';
+              monthlyCanvas.style.maxWidth = '100%';
+              fullResultsDiv.appendChild(document.createElement('hr'));
+              fullResultsDiv.appendChild(monthlyCanvas);
+              new Chart(monthlyCanvas, {
+                type: 'line',
+                data: {
+                  labels: months,
+                  datasets: [{
+                    label: 'Monthly Dried Output (kg)',
+                    data: monthlyDried,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: true,
+                    tension: 0.2
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  plugins: {
+                    title: {
+                      display: true,
+                      text: 'Monthly Harvest Trend'
+                    },
+                    legend: { display: false }
+                  },
+                  scales: {
+                    y: { title: { display: true, text: 'Dried Output (kg)' } }
+                  }
+                }
+              });
+            }
+          } catch (err) {
+            fullResultsDiv.innerHTML = `<p style="color:red;">${err.message}</p>`;
+          }
+        });
+      }
+    });
+  </script>
+
+  <script>
+    // ... existing code ...
+    // Reports Section: Clear Reports Button
+    document.addEventListener('DOMContentLoaded', function() {
+      const clearReportsBtn = document.getElementById('clearReportsBtn');
+      if (clearReportsBtn) {
+        clearReportsBtn.addEventListener('click', function() {
+          // Clear the results div
+          const resultsDiv = document.getElementById('fullProcessResults');
+          if (resultsDiv) resultsDiv.innerHTML = '';
+          // Clear the chart
+          const chartCanvas = document.getElementById('fullProcessChart');
+          if (chartCanvas && chartCanvas.getContext) {
+            const ctx = chartCanvas.getContext('2d');
+            ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
+          }
+        });
+      }
+    });
+    // ... existing code ...
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const analyzeBtn = document.getElementById('analyzeHarvestEfficiencyBtn');
+    const resultsDiv = document.getElementById('harvestEfficiencyResults');
+    const chartCanvas = document.getElementById('harvestEfficiencyChart');
+    let chartInstance = null;
+    if (analyzeBtn) {
+      analyzeBtn.addEventListener('click', async function() {
+        resultsDiv.innerHTML = '<p>Loading...</p>';
+        if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+        try {
+          // Fetch harvest efficiency data from backend
+          const response = await fetch('http://localhost:5000/api/statistics/harvest-efficiency');
+          const result = await response.json();
+          if (!result.success) throw new Error(result.error || 'Failed to fetch data');
+          const data = result.data;
+          if (!Array.isArray(data) || data.length === 0) {
+            resultsDiv.innerHTML = '<p>No harvest efficiency records found.</p>';
+            return;
+          }
+          // Build table
+          let html = `<table class="table"><thead><tr><th>Batch ID</th><th>Date</th><th>Wet Placed (kg)</th><th>Dried Produced (kg)</th><th>Actual Ratio</th><th>Status</th></tr></thead><tbody>`;
+          const chartLabels = [];
+          const chartData = [];
+          data.forEach(record => {
+            const batchId = record.batch_id || record.batchId;
+            const date = record.drying_date || record.dryingDate;
+            const wet = parseFloat(record.wet_placed || 0);
+            const dried = parseFloat(record.dried_produced || 0);
+            const ratio = record.actual_ratio !== undefined ? parseFloat(record.actual_ratio).toFixed(2) : '';
+            const status = record.efficiency_status === 'Efficient'
+              ? '<span style="color:green;font-weight:bold;">Efficient</span>'
+              : '<span style="color:red;font-weight:bold;">Inefficient</span>';
+            html += `<tr><td>${batchId}</td><td>${date}</td><td>${wet}</td><td>${dried}</td><td>${ratio}</td><td>${status}</td></tr>`;
+            chartLabels.push(date + ' (Batch ' + batchId + ')');
+            chartData.push(record.actual_ratio !== undefined ? parseFloat(record.actual_ratio) : null);
+          });
+          html += '</tbody></table>';
+          html += '<p><strong>Guideline:</strong> Expected Ratio = 3:1 (Actual Ratio ≥ 0.33 is Efficient)</p>';
+          resultsDiv.innerHTML = html;
+          // Draw chart
+          chartInstance = new Chart(chartCanvas, {
+            type: 'line',
+            data: {
+              labels: chartLabels,
+              datasets: [{
+                label: 'Actual Ratio (Dried/Wet)',
+                data: chartData,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                fill: true,
+                tension: 0.2
+              }, {
+                label: 'Expected Ratio (0.33)',
+                data: Array(chartLabels.length).fill(0.33),
+                borderColor: 'rgba(255, 99, 132, 0.7)',
+                borderDash: [5,5],
+                pointRadius: 0,
+                fill: false,
+                type: 'line'
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Batch Harvest Efficiency Over Time'
+                },
+                legend: { position: 'top' }
+              },
+              scales: {
+                y: {
+                  min: 0,
+                  max: 1,
+                  title: { display: true, text: 'Actual Ratio (Dried/Wet)' }
+                }
+              }
+            }
+          });
+        } catch (err) {
+          resultsDiv.innerHTML = `<p style="color:red;">${err.message}</p>`;
+        }
+      });
+    }
+  });
+  </script>
+
+  <script>
+  function toggleSidebarSection(sectionId) {
+    const group = document.getElementById(sectionId);
+    if (group) {
+      group.style.display = (group.style.display === 'none' || group.style.display === '') ? 'block' : 'none';
+    }
+  }
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sendHarvestReportBtn = document.getElementById('sendHarvestReportBtn');
+    if (sendHarvestReportBtn) {
+      sendHarvestReportBtn.addEventListener('click', async function() {
+        sendHarvestReportBtn.disabled = true;
+        sendHarvestReportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        try {
+          const resp = await fetch('/api/send-harvest-report', {method: 'POST', credentials: 'include'});
+          const result = await resp.json();
+          if (result.success) {
+            alert('Harvest report sent to admin!');
+          } else {
+            alert('Failed to send report: ' + (result.error || result.message));
+          }
+        } catch (e) {
+          alert('Error sending report: ' + e);
+        } finally {
+          sendHarvestReportBtn.disabled = false;
+          sendHarvestReportBtn.innerHTML = '<i class="fas fa-envelope"></i> Email Harvest Report to Admin';
+        }
+      });
+    }
+  });
+  </script>
+</body>
+</html>
